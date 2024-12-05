@@ -18,4 +18,3 @@ inflect==7.0.0
 #Ai Requirements
 langchain-openai
 python-dotenv
-redis
