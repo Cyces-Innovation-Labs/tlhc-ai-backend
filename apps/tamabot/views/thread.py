@@ -13,7 +13,11 @@ from pydantic import BaseModel, Field
 import requests
 from uuid import UUID
 from apps.common.serializers import AppReadOnlyModelSerializer
+from django.conf import settings
 # from rest_framework import serializers
+
+book_couch_link = settings.BOOK_COUCH_LINK
+therapist_url = settings.THERAPIST_URL
 
 
 
@@ -56,7 +60,7 @@ class TamaResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
                 thread = Thread.objects.get(uuid=thread_id)
             except Thread.DoesNotExist:
                 return self.send_error_response({"error": "Invalid thread ID"})    
-            messages = thread.messages.order_by('-created').values('user_question', 'ai_answer')[:2]
+            messages = thread.messages.order_by('-created').values('user_question', 'ai_answer')[:6]
             formatted_messages = []
             for msg in messages:
                 formatted_messages.append(("user", msg['user_question']))
@@ -73,13 +77,13 @@ class TamaResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
             chain = prompt_template | model | parser
             ai_response=chain.invoke({"text": user_question })
             
-            if 'https://thelovehopecompany.com/book-therapy/therapy-for?therapy=individual_counselling' in ai_response:
+            if book_couch_link in ai_response:
                 llm = ChatOpenAI(model="gpt-4o-mini",temperature=0.4)
                 structured_llm = llm.with_structured_output(MentalHealthSupport)
                 new_question = ('user',user_question)
                 formatted_messages.append(new_question)
                 a=structured_llm.invoke(f'{formatted_messages}')
-                url = "https://api-v2-staging.thelovehopecompany.com/api/therapist/generate-therapist-booking-link/"
+                url = therapist_url
                 headers = {
                     "Content-Type": "application/json"
                 }
@@ -122,7 +126,7 @@ class TamaResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
                 )
             
             return self.send_response({"ai_answer":ai_response})
-        return self.send_error_response(serializer.errors)
+        return self.send_error_response({"message":serializer.errors})
     
 
 
