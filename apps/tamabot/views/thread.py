@@ -159,8 +159,7 @@ class FeedbackMessageAPIView(NonAuthenticatedAPIMixin,AppAPIView):
                 message = Message.objects.get(uuid=message_uuid)
                 if like and dislike:
                     return self.send_error_response({'error': 'You cannot like and dislike the same message.'})
-                if not like and not dislike:
-                    return self.send_error_response({'error': 'You must choose either like or dislike.'})
+               
                 
                 message.like = like
                 message.dislike = dislike
