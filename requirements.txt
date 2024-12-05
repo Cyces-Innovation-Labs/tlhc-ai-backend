@@ -16,5 +16,5 @@ botocore==1.34.50
 inflect==7.0.0
 
 #Ai Requirements
-langchain-openai
-python-dotenv
+langchain-openai==0.2.10
+python-dotenv==1.0.1

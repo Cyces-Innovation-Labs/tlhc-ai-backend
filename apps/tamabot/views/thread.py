@@ -41,7 +41,7 @@ class NewThreadAPIView(NonAuthenticatedAPIMixin,AppAPIView):
             thread_id = str(thread.uuid)
             return self.send_response({"thread_id": thread_id})
         except Exception as e:
-            return self.send_error_response("Error creating thread", details=str(e))
+            return self.send_error_response({"message": "Error creating thread", "error":str(e)})
 
     
 class TamaResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
