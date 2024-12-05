@@ -1,4 +1,4 @@
-from apps.common.views import AppAPIView,NonAuthenticatedAPIMixin
+from apps.common.views import AppAPIView,NonAuthenticatedAPIMixin,AppModelListAPIViewSet
 from apps.tamabot.models import Thread,Message 
 from apps.tamabot.serializers import TamaResponseSerializer,MessageFeedbackSerializer
 
@@ -146,6 +146,28 @@ class RetrieveMessageAPIView(NonAuthenticatedAPIMixin,AppAPIView):
         messages = thread.messages.all()
         serializer = MessageSerializer(messages, many=True)
         return self.send_response({"message": serializer.data})
+    
+class ThreadListSerializer(AppReadOnlyModelSerializer):
+    """Serializer class for Location list."""
+
+    class Meta(AppReadOnlyModelSerializer.Meta):
+        model = Thread
+        fields = ["uuid", "created"]
+
+    
+class ListThreadsViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
+
+    queryset = Thread.objects.all()
+    serializer_class = ThreadListSerializer
+
+    def get_meta_for_table(self) -> dict:
+        data = {
+            "columns": self.get_table_columns()
+        }
+        return data
+
+        
+        
 
 class FeedbackMessageAPIView(NonAuthenticatedAPIMixin,AppAPIView):
     def post(self, request, *args, **kwargs):

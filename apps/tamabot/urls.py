@@ -1,11 +1,12 @@
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 
-from apps.tamabot.views import NewThreadAPIView,TamaResponseAPIView,RetrieveMessageAPIView,FeedbackMessageAPIView
+from apps.tamabot.views import NewThreadAPIView,TamaResponseAPIView,RetrieveMessageAPIView,FeedbackMessageAPIView,ListThreadsViewSet
 
 router = SimpleRouter()
 API_URL_PREFIX = "api/chatbot/"
 
+router.register("threads/list", ListThreadsViewSet)
 
 urlpatterns = [
    
