@@ -61,6 +61,7 @@ class TamaResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
             except Thread.DoesNotExist:
                 return self.send_error_response({"error": "Invalid thread ID"})    
             messages = thread.messages.order_by('-created').values('user_question', 'ai_answer')[:6]
+            messages = messages[::-1]
             formatted_messages = []
             for msg in messages:
                 formatted_messages.append(("user", msg['user_question']))
