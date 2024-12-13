@@ -158,7 +158,7 @@ class ThreadListSerializer(AppReadOnlyModelSerializer):
     
 class ListThreadsViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
 
-    queryset = Thread.objects.all()
+    queryset = Thread.objects.filter(messages__isnull=False).distinct()
     serializer_class = ThreadListSerializer
 
     def get_meta_for_table(self) -> dict:
