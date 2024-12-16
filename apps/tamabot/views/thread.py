@@ -14,6 +14,7 @@ import requests
 from uuid import UUID
 from apps.common.serializers import AppReadOnlyModelSerializer
 from django.conf import settings
+import json
 # from rest_framework import serializers
 
 book_couch_link = settings.BOOK_COUCH_LINK
@@ -49,6 +50,7 @@ class NewThreadAPIView(NonAuthenticatedAPIMixin,AppAPIView):
 
     
 class TamaResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
+
 
     def post(self, request, *args, **kwargs):
         """Handle POST request to for Tama answers """
@@ -250,3 +252,113 @@ class FeedbackMessageAPIView(NonAuthenticatedAPIMixin,AppAPIView):
     
     # return response
 
+
+
+
+class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
+
+    def gen_ai(self,formatted_messages,user_question,thread):
+        system_template=love_hope_system_template
+        print(formatted_messages)
+        prompt_template = ChatPromptTemplate.from_messages([
+        ('system', system_template),
+        *formatted_messages,
+        ('user', '{text}')
+            ])
+        yield f"data: {json.dumps({'type': 'status', 'content': 'Started'})}\n\n"
+        # yield json.dumps({"type": "status", "content": "Started"})
+        model = ChatOpenAI(model="gpt-4o-mini",temperature=0.2)
+        parser = StrOutputParser()
+        chain = prompt_template | model | parser
+        ai_answer_chunks = []
+        for chunk in chain.stream({"text": user_question }):
+            ai_answer_chunks.append(chunk)
+            # yield json.dumps({"type": "message_delta", "content": f"{chunk}"})
+            yield f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
+            
+        # ai_response=chain.invoke({"text": user_question })
+        ai_response = "".join(ai_answer_chunks)
+        # Need to add streams  
+        if book_couch_link in ai_response:
+            # yield json.dumps({"type": "status", "content": "analysing_mental_state"})
+            yield f"data: {json.dumps({'type': 'status', 'content': 'analysing_mental_state'})}\n\n"
+            
+            llm = ChatOpenAI(model="gpt-4o-mini",temperature=0.4)
+            structured_llm = llm.with_structured_output(MentalHealthSupport)
+            new_question = ('user',user_question)
+            formatted_messages.append(new_question)
+            a=structured_llm.invoke(f'{formatted_messages}')
+            url = therapist_url
+            headers = {
+                "Content-Type": "application/json"
+            }
+            if a.reasons:
+                reasons_param = ','.join(a.reasons)
+            else:
+                reasons_param = None
+            params = {
+                "counselling_type": a.councelling_for,    
+                "level_of_experience": a.level_of_experience, 
+                "reasons": reasons_param,                         
+            }
+            # yield json.dumps({"type": "status", "content": "fetching_therapist"})
+            yield f"data: {json.dumps({'type': 'status', 'content': 'fetching_therapist'})}\n\n"
+            response = requests.get(url, headers=headers, params=params)
+            if response.status_code==200:
+                data = response.json()
+                therapist_data = data.get('data', {}).get('results', [])
+                if therapist_data:
+                    system_template = """
+                    you'r only role is to display data in a Tabular Format
+                    Therapist Data : {therapist_data}
+                    Display The Therapist Details In Tabular Format Like name,Therapist link
+                    Important : If there is no therpist data available simply return 'Visit The Love Hope Company for Therapist'
+                    """
+                    prompt_template = ChatPromptTemplate.from_messages([
+                        ('system', system_template),
+                    ])
+                    model = ChatOpenAI(model="gpt-4o-mini",temperature=0.4)
+
+                    parser = StrOutputParser()
+
+                    chain = prompt_template | model | parser
+                    ai_table_chunks=[]
+                    for chunk in chain.stream({"therapist_data": str(therapist_data)}):
+                        ai_table_chunks.append(chunk)
+                        yield f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
+                        # yield json.dumps({"type": "message_delta", "content": f"{chunk}"})
+                    ai_table_response = "".join(ai_table_chunks)
+                    ai_response=ai_response+""+ai_table_response
+
+        Message.objects.create(
+                thread=thread,
+                user_question=user_question,
+                ai_answer=ai_response,
+                )
+        yield f"data: {json.dumps({'type': 'status', 'content': 'Completed'})}\n\n"
+        # yield json.dumps({"type": "status", "content": "Completed"})
+        
+    
+
+
+    def post(self, request, *args, **kwargs):
+        """Handle POST request to for Tama answers """
+        serializer = TamaResponseSerializer(data=request.data)
+        if serializer.is_valid():
+            user_question = serializer.validated_data['user_question']
+            thread_id = serializer.validated_data['thread_id']
+            try:
+                thread = Thread.objects.get(uuid=thread_id)
+            except Thread.DoesNotExist:
+                return self.send_error_response({"error": "Invalid thread ID"})    
+            messages = thread.messages.order_by('-created').values('user_question', 'ai_answer')[:6]
+            messages = messages[::-1]
+            formatted_messages = []
+            for msg in messages:
+                formatted_messages.append(("user", msg['user_question']))
+                formatted_messages.append(("assistant", msg['ai_answer']))
+            response = StreamingHttpResponse(self.gen_ai(formatted_messages,user_question,thread), content_type='text/event-stream')
+            response['Cache-Control'] = 'no-cache'  
+            response["X-Accel-Buffering"] = "no" 
+            return response
+        return self.send_error_response({"message":serializer.errors})
