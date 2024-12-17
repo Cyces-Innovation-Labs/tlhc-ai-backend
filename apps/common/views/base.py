@@ -1,3 +1,5 @@
+from datetime import datetime
+import jwt
 from contextlib import suppress
 
 from apps.common.config import API_RESPONSE_ACTION_CODES
@@ -7,6 +9,11 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.status import is_success
 from rest_framework.views import APIView
+from rest_framework.authentication import BaseAuthentication
+from rest_framework.exceptions import AuthenticationFailed
+from django.conf import settings
+
+from apps.tamabot.models.feedback import AdminUser
 
 
 class NonAuthenticatedAPIMixin:
@@ -225,3 +232,63 @@ class AppCreateAPIView(AppViewMixin, CreateAPIView):
         """Called after `perform_create`. Handle custom logic here."""
 
         pass
+
+class CustomAuthenticatedUser:
+    def __init__(self, user):
+        self.user = user
+        self.is_authenticated = True 
+
+    def __getattr__(self, name):
+        return getattr(self.user, name)
+
+class RemoteJWTAuthentication(BaseAuthentication):
+    def authenticate(self, request):
+    
+        auth = request.headers.get("Authorization")
+        if not auth:
+            raise AuthenticationFailed("Authorization header is missing")
+
+        try:
+            parts = auth.split()
+            if parts[0].lower() != "bearer":
+                raise AuthenticationFailed("Authorization header must start with Bearer")
+            
+            # breakpoint()
+            token = parts[1]
+            payload = self.decode_jwt_token(token)
+            user = self.get_user_from_payload(payload)
+            
+            custom_user = CustomAuthenticatedUser(user)
+            return custom_user, None
+         
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed("token is expired")
+        except Exception as e:
+            raise AuthenticationFailed(str(e))
+
+    def decode_jwt_token(self, token):
+        try:
+            decoded_token = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=["HS256"])
+            return decoded_token
+        except jwt.DecodeError:
+            raise AuthenticationFailed("Error decoding token")
+        except jwt.InvalidTokenError:
+            raise AuthenticationFailed("Invalid token")
+        except Exception as e:
+            raise AuthenticationFailed(f"An error occurred while decoding the token: {str(e)}")
+
+    
+    def get_user_from_payload(self, payload):
+        
+        user_id = payload.get("user_id")
+        first_name = payload.get("first_name")
+        last_name = payload.get("last_name")
+
+        if not first_name or not user_id or not last_name:
+            raise AuthenticationFailed("Invalid Token")
+        
+        try:
+            user = AdminUser.objects.update_or_create(user_id=user_id, defaults={'first_name': first_name, 'last_name': last_name})
+            return user
+        except AdminUser.DoesNotExist:
+            raise AuthenticationFailed("User not found")
