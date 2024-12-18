@@ -1,7 +1,6 @@
 from django.db import models
 from apps.common.models.base import BaseModel
 from apps.common.models import COMMON_BLANK_AND_NULLABLE_FIELD_CONFIG, COMMON_CHAR_FIELD_MAX_LENGTH, BaseModel
-from apps.tamabot.models.thread import Message
 
 class AdminUser(BaseModel):
 
@@ -10,7 +9,8 @@ class AdminUser(BaseModel):
     user_id = models.IntegerField(unique=True)
     
 class Feedback(BaseModel):
+    from apps.tamabot.models.thread import Thread
 
-    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name="related_message_Feedbacks")
+    thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name="related_thread_feedbacks")
     feedback_given_by = models.ForeignKey(AdminUser, on_delete=models.CASCADE)
     feedback = models.TextField()

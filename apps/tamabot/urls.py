@@ -9,7 +9,8 @@ from apps.tamabot.views import (
     ListThreadsViewSet,
     TamaStreamingResponseAPIView,
     FeedbackCUDAPIView,
-    FeedbackDetailAPIAPIViewSet
+    FeedbackDetailAPIAPIViewSet,
+    ThreadTagUpdateViewSet
 )
 
 router = SimpleRouter()
@@ -18,6 +19,7 @@ API_URL_PREFIX = "api/chatbot/"
 router.register("threads/list", ListThreadsViewSet)
 router.register("feedback/cud", FeedbackCUDAPIView)
 router.register("feedback/detail",FeedbackDetailAPIAPIViewSet)
+router.register("thread/tag/update", ThreadTagUpdateViewSet)
 
 urlpatterns = [
     path(f"{API_URL_PREFIX}tama-streaming-response/", TamaStreamingResponseAPIView.as_view()),

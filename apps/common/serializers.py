@@ -369,6 +369,18 @@ def simple_serialize_instance(instance, keys: list, parent_data: dict = None, di
 
     return parent_data
 
+class AppUpdateModelSerializer(AppWriteOnlyModelSerializer):
+    """
+    Applications version of the CreateModelSerializer which supports only model creation.
+    """
+
+    class Meta(AppWriteOnlyModelSerializer.Meta):
+        pass
+
+    def create(self, validated_data):
+        """This serializer is only for update."""
+
+        raise NotImplementedError
 
 class FileModelToURLField(serializers.Field):
     """

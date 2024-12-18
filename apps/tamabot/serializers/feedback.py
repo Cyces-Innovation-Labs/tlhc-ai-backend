@@ -1,5 +1,5 @@
-from apps.common.serializers import AppWriteOnlyModelSerializer, AppReadOnlyModelSerializer
-from apps.tamabot.models import Feedback
+from apps.common.serializers import AppWriteOnlyModelSerializer, AppReadOnlyModelSerializer, AppUpdateModelSerializer
+from apps.tamabot.models import Feedback, Thread
 from rest_framework import serializers
 
 
@@ -9,7 +9,7 @@ class FeedbackCUDSerializer(AppWriteOnlyModelSerializer):
     class Meta(AppWriteOnlyModelSerializer.Meta):
         model = Feedback
         fields = [
-            "message",
+            "thread",
             "feedback",
         ]
     
@@ -34,7 +34,7 @@ class FeedbackDetailSerializer(AppReadOnlyModelSerializer):
         fields = [
             "id",
             "uuid",
-            "message",
+            "thread",
             "feedback",
             "feedback_given_by",
             "created",
@@ -44,3 +44,10 @@ class FeedbackDetailSerializer(AppReadOnlyModelSerializer):
         if obj.feedback_given_by:
             return f"{obj.feedback_given_by.first_name} {obj.feedback_given_by.last_name}"
         return None
+
+class ThreadTagUpdateSerializer(AppUpdateModelSerializer):
+    """Add Tag Against Thread"""
+
+    class Meta(AppUpdateModelSerializer.Meta):
+        model = Thread
+        fields = ["tag"]
