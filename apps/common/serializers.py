@@ -385,16 +385,3 @@ class FileModelToURLField(serializers.Field):
         """Return the url."""
 
         return value.file.url
-    
-class AppUpdateModelSerializer(AppWriteOnlyModelSerializer):
-    """
-    Applications version of the CreateModelSerializer which supports only model creation.
-    """
-
-    class Meta(AppWriteOnlyModelSerializer.Meta):
-        pass
-
-    def create(self, validated_data):
-        """This serializer is only for update."""
-
-        raise NotImplementedError

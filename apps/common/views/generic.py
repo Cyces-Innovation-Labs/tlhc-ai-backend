@@ -183,59 +183,6 @@ class AppModelCUDAPIViewSet(
         return self.send_response(
             data=self.get_serializer(instance=self.get_object()).get_meta_for_update()
         )
-    
-class AppModelUpdateAPIViewSet(
-    AppViewMixin,
-    UpdateModelMixin,
-    AppGenericViewSet,
-):
-    """
-    Urls Allowed:
-        > PUT: {endpoint}/<pk>/
-            >> Get data from font-end to update an object.
-        > GET: {endpoint}/<pk>/meta/
-            >> Returns metadata for the front-end for object update.
-
-    """
-
-    def create(self, request, *args, **kwargs):
-        """Not Supported."""
-
-        return NotImplementedError
-
-    def destroy(self, request, *args, **kwargs):
-        """Not supported."""
-
-        return NotImplementedError
-
-    @action(
-        methods=["GET"],
-        url_path="meta",
-        detail=True,
-    )
-    def get_meta_for_update(self, *args, **kwargs):
-        """Returns the meta details for update from serializer."""
-
-        return self.send_response(data=self.get_serializer(instance=self.get_object()).get_meta_for_update())
-
-
-# Config for Meta fields to send for filters and other place where identity only used.
-DEFAULT_IDENTITY_DISPLAY_FIELDS = (
-    "id",
-    "identity",
-    "uuid",
-)
-
-
-class AbstractLookUpFieldMixin:
-    """
-    This class provides config for which field to look in the model as well as
-    in url.
-    """
-
-    lookup_url_kwarg = "uuid"
-    lookup_field = "uuid"
-
 
 def get_upload_api_view(meta_model, meta_fields=None):
     """Central function to return the UploadAPIView. Used to handle uploads."""
