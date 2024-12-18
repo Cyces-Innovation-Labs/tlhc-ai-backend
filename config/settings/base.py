@@ -188,3 +188,5 @@ DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 BOOK_COUCH_LINK=env.str("BOOK_COUCH_LINK")
 THERAPIST_URL=env.str("THERAPIST_URL")
+
+JWT_SECRET_KEY = env.str("SECRET_KEY")

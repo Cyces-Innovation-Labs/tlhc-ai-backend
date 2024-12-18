@@ -18,3 +18,5 @@ inflect==7.0.0
 #Ai Requirements
 langchain-openai==0.2.10
 python-dotenv==1.0.1
+djangorestframework-simplejwt==5.2.2
+PyJWT==2.8.0

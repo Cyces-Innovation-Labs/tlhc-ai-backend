@@ -1,10 +1,10 @@
 from django.db import models
-import uuid
-from apps.common.models.base import COMMON_BLANK_AND_NULLABLE_FIELD_CONFIG
-from apps.common.models import BaseModel
+from apps.common.models import COMMON_CHAR_FIELD_MAX_LENGTH, COMMON_BLANK_AND_NULLABLE_FIELD_CONFIG, BaseModel
+
 
 class Thread(BaseModel):
-    pass
+
+    tag = models.CharField( max_length=COMMON_CHAR_FIELD_MAX_LENGTH,**COMMON_BLANK_AND_NULLABLE_FIELD_CONFIG,)
     
 class Message(BaseModel):
     thread = models.ForeignKey('Thread', on_delete=models.CASCADE, related_name='messages',**COMMON_BLANK_AND_NULLABLE_FIELD_CONFIG)
