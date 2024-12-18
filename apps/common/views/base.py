@@ -2,6 +2,7 @@ from datetime import datetime
 import jwt
 from contextlib import suppress
 
+from apps.access.models.user import User
 from apps.common.config import API_RESPONSE_ACTION_CODES
 from rest_framework import permissions, status
 from rest_framework.exceptions import MethodNotAllowed, NotFound
@@ -253,7 +254,6 @@ class RemoteJWTAuthentication(BaseAuthentication):
             if parts[0].lower() != "bearer":
                 raise AuthenticationFailed("Authorization header must start with Bearer")
             
-            # breakpoint()
             token = parts[1]
             payload = self.decode_jwt_token(token)
             user = self.get_user_from_payload(payload)
@@ -279,16 +279,12 @@ class RemoteJWTAuthentication(BaseAuthentication):
 
     
     def get_user_from_payload(self, payload):
+        required_fields = ["user_id", "user_type", "first_name", "last_name"]
+        if not all(payload.get(field) for field in required_fields) or payload["user_type"] != "admin":
+            raise AuthenticationFailed("Invalid or unauthorized token.")
         
-        user_id = payload.get("user_id")
-        first_name = payload.get("first_name")
-        last_name = payload.get("last_name")
-
-        if not first_name or not user_id or not last_name:
-            raise AuthenticationFailed("Invalid Token")
-        
-        try:
-            user = AdminUser.objects.update_or_create(user_id=user_id, defaults={'first_name': first_name, 'last_name': last_name})
-            return user
-        except AdminUser.DoesNotExist:
-            raise AuthenticationFailed("User not found")
+        user, _ = AdminUser.objects.update_or_create(
+            user_id=payload["user_id"], 
+            defaults={"first_name": payload["first_name"], "last_name": payload["last_name"]}
+        )
+        return user

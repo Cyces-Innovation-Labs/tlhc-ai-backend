@@ -1,6 +1,5 @@
 from django.db import models
 from apps.common.models import COMMON_BLANK_AND_NULLABLE_FIELD_CONFIG, BaseModel
-from apps.tamabot.models.feedback import FeedBack
 
 class Thread(BaseModel):
     pass
@@ -11,7 +10,6 @@ class Message(BaseModel):
     ai_answer = models.TextField()
     like = models.BooleanField(default=False)
     dislike = models.BooleanField(default=False)
-    feedback = models.ManyToManyField(FeedBack)
     # conversations = models.JSONField(default=list)
 
     # def add_conversations(self, human, ai):

@@ -1,2 +1,2 @@
 from .thread import Thread,Message
-from .feedback import FeedBack
+from .feedback import Feedback

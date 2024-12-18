@@ -1,4 +1,4 @@
-from apps.common.views import AppAPIView,NonAuthenticatedAPIMixin,AppModelListAPIViewSet,RemoteJWTAuthentication
+from apps.common.views import AppAPIView,NonAuthenticatedAPIMixin,AppModelListAPIViewSet
 from apps.tamabot.models import Thread,Message 
 from apps.tamabot.serializers import TamaResponseSerializer,MessageFeedbackSerializer
 
@@ -249,12 +249,3 @@ class FeedbackMessageAPIView(NonAuthenticatedAPIMixin,AppAPIView):
     # response["X-Accel-Buffering"] = "no"
     
     # return response
-
-
-class ValidationViewSet(AppAPIView):
-
-    authentication_classes = [RemoteJWTAuthentication]
-    
-    def post(self, request):
-        data = {"hello"}
-        return self.send_response(data)
