@@ -2,7 +2,7 @@ from apps.common.views import AppAPIView,NonAuthenticatedAPIMixin,AppModelListAP
 from apps.tamabot.models import Thread,Message 
 from apps.tamabot.serializers import TamaResponseSerializer,MessageFeedbackSerializer
 
-
+from .system_messagev2 import love_hope_system_template_V2
 from .system_message import love_hope_system_template
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -69,7 +69,7 @@ class TamaResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
                 formatted_messages.append(("user", msg['user_question']))
                 formatted_messages.append(("assistant", msg['ai_answer']))
             system_template=love_hope_system_template
-            print(formatted_messages)
+            
             prompt_template = ChatPromptTemplate.from_messages([
             ('system', system_template),
             *formatted_messages,
@@ -155,7 +155,7 @@ class ThreadListSerializer(AppReadOnlyModelSerializer):
 
     class Meta(AppReadOnlyModelSerializer.Meta):
         model = Thread
-        fields = ["uuid", "created"]
+        fields = ["uuid", "created","modified"]
 
     
 class ListThreadsViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
@@ -258,31 +258,30 @@ class FeedbackMessageAPIView(NonAuthenticatedAPIMixin,AppAPIView):
 class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
 
     def gen_ai(self,formatted_messages,user_question,thread):
-        system_template=love_hope_system_template
-        print(formatted_messages)
+        system_template=love_hope_system_template_V2
+        
         prompt_template = ChatPromptTemplate.from_messages([
         ('system', system_template),
         *formatted_messages,
         ('user', '{text}')
             ])
-        yield f"data: {json.dumps({'type': 'status', 'content': 'Started'})}\n\n"
-        # yield json.dumps({"type": "status", "content": "Started"})
+        yield f"data: {json.dumps({'type': 'status', 'content': 'started'})}\n\n"
         model = ChatOpenAI(model="gpt-4o-mini",temperature=0.2)
         parser = StrOutputParser()
         chain = prompt_template | model | parser
         ai_answer_chunks = []
         for chunk in chain.stream({"text": user_question }):
             ai_answer_chunks.append(chunk)
-            # yield json.dumps({"type": "message_delta", "content": f"{chunk}"})
             yield f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
             
-        # ai_response=chain.invoke({"text": user_question })
+        
         ai_response = "".join(ai_answer_chunks)
-        # Need to add streams  
+         
         if book_couch_link in ai_response:
-            # yield json.dumps({"type": "status", "content": "analysing_mental_state"})
-            yield f"data: {json.dumps({'type': 'status', 'content': 'analysing_mental_state'})}\n\n"
-            
+            # yield f"data: {json.dumps({'type': 'status', 'content': 'analysing_mental_state'})}\n\n"
+            #faizermodel
+            # thread.is_book_couch = True
+            # thread.save()
             llm = ChatOpenAI(model="gpt-4o-mini",temperature=0.4)
             structured_llm = llm.with_structured_output(MentalHealthSupport)
             new_question = ('user',user_question)
@@ -293,6 +292,8 @@ class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
                 "Content-Type": "application/json"
             }
             if a.reasons:
+                #faizermodel
+                # thread.add_categories_to_thread(a.reasons)
                 reasons_param = ','.join(a.reasons)
             else:
                 reasons_param = None
@@ -301,17 +302,17 @@ class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
                 "level_of_experience": a.level_of_experience, 
                 "reasons": reasons_param,                         
             }
-            # yield json.dumps({"type": "status", "content": "fetching_therapist"})
-            yield f"data: {json.dumps({'type': 'status', 'content': 'fetching_therapist'})}\n\n"
+            
+            # yield f"data: {json.dumps({'type': 'status', 'content': 'fetching_therapist'})}\n\n"
             response = requests.get(url, headers=headers, params=params)
             if response.status_code==200:
                 data = response.json()
                 therapist_data = data.get('data', {}).get('results', [])
                 if therapist_data:
                     system_template = """
-                    you'r only role is to display data in a Tabular Format
-                    Therapist Data : {therapist_data}
-                    Display The Therapist Details In Tabular Format Like name,Therapist link
+                    you'r only role is to display data in nice format don't use Tabular format
+                    Suggested Therapist Data : {therapist_data}
+                    Display The Therapist Details In Readable Format Like Suggested Therapist name,Therapist link
                     Important : If there is no therpist data available simply return 'Visit The Love Hope Company for Therapist'
                     """
                     prompt_template = ChatPromptTemplate.from_messages([
@@ -323,20 +324,21 @@ class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
 
                     chain = prompt_template | model | parser
                     ai_table_chunks=[]
+                    new_chunk="\n\n"
+                    yield f"data: {json.dumps({'type': 'message_delta', 'content': new_chunk})}\n\n"
                     for chunk in chain.stream({"therapist_data": str(therapist_data)}):
                         ai_table_chunks.append(chunk)
                         yield f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
-                        # yield json.dumps({"type": "message_delta", "content": f"{chunk}"})
                     ai_table_response = "".join(ai_table_chunks)
-                    ai_response=ai_response+""+ai_table_response
+                    ai_response=f"{ai_response}\n\n{ai_table_response}"
 
         Message.objects.create(
                 thread=thread,
                 user_question=user_question,
                 ai_answer=ai_response,
                 )
-        yield f"data: {json.dumps({'type': 'status', 'content': 'Completed'})}\n\n"
-        # yield json.dumps({"type": "status", "content": "Completed"})
+        yield f"data: {json.dumps({'type': 'status', 'content': 'finished'})}\n\n"
+
         
     
 
