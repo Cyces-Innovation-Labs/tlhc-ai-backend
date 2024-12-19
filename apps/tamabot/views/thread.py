@@ -137,7 +137,7 @@ class TamaResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
 class MessageSerializer(AppReadOnlyModelSerializer):
     class Meta:
         model = Message
-        fields = ['uuid', 'user_question', 'ai_answer','like','dislike']
+        fields = ['uuid', 'user_question', 'ai_answer','created']
 
 
 class RetrieveMessageAPIView(NonAuthenticatedAPIMixin,AppAPIView):
@@ -155,13 +155,21 @@ class ThreadListSerializer(AppReadOnlyModelSerializer):
 
     class Meta(AppReadOnlyModelSerializer.Meta):
         model = Thread
-        fields = ["uuid", "created","modified"]
+        fields = ["uuid", "categories","is_book_couch","created","modified"]
 
     
 class ListThreadsViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
 
-    queryset = Thread.objects.filter(messages__isnull=False).distinct()
+    queryset = Thread.objects.filter(messages__isnull=False).distinct().order_by("-created")
     serializer_class = ThreadListSerializer
+
+    all_table_columns = {
+        "uuid": "Conversation ID",
+        "categories": "Category",
+        "is_book_couch": "Book a couch",
+        "created": "Start Date",
+        "modified": "End Date",
+    }
 
     def get_meta_for_table(self) -> dict:
         data = {
@@ -169,8 +177,19 @@ class ListThreadsViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
         }
         return data
 
+class MessageListAPIViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
+    """API to list all Branch"""
+    queryset=Message.objects.all()
+    serializer_class = MessageSerializer
+    
+    def get_queryset(self):
         
-        
+        thread_id = self.request.query_params.get('thread_id') 
+        if thread_id:
+            q=super().get_queryset()
+            return q.filter(thread__uuid=thread_id)
+        return Message.objects.none() 
+
 
 class FeedbackMessageAPIView(NonAuthenticatedAPIMixin,AppAPIView):
     def post(self, request, *args, **kwargs):
@@ -278,10 +297,8 @@ class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
         ai_response = "".join(ai_answer_chunks)
          
         if book_couch_link in ai_response:
-            # yield f"data: {json.dumps({'type': 'status', 'content': 'analysing_mental_state'})}\n\n"
-            #faizermodel
-            # thread.is_book_couch = True
-            # thread.save()
+            thread.is_book_couch = True
+            thread.save()
             llm = ChatOpenAI(model="gpt-4o-mini",temperature=0.4)
             structured_llm = llm.with_structured_output(MentalHealthSupport)
             new_question = ('user',user_question)
@@ -292,8 +309,8 @@ class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
                 "Content-Type": "application/json"
             }
             if a.reasons:
-                #faizermodel
-                # thread.add_categories_to_thread(a.reasons)
+                
+                thread.add_categories_to_thread(thread,a.reasons)
                 reasons_param = ','.join(a.reasons)
             else:
                 reasons_param = None
