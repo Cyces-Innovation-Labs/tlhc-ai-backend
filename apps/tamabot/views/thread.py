@@ -157,11 +157,11 @@ class ThreadListSerializer(AppReadOnlyModelSerializer):
         model = Thread
         fields = ["uuid", "categories","is_book_couch","created","modified"]
 
-    
 class ListThreadsViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
 
     queryset = Thread.objects.filter(messages__isnull=False).distinct().order_by("-created")
     serializer_class = ThreadListSerializer
+    filterset_fields = ["uuid"] 
 
     all_table_columns = {
         "uuid": "Conversation ID",
