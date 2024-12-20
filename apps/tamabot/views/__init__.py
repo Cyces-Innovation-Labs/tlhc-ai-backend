@@ -1,2 +1,2 @@
-from .thread import NewThreadAPIView,TamaResponseAPIView,RetrieveMessageAPIView,FeedbackMessageAPIView,ListThreadsViewSet,TamaStreamingResponseAPIView,MessageListAPIViewSet
+from .thread import NewThreadAPIView,TamaResponseAPIView,ListThreadsViewSet,TamaStreamingResponseAPIView,MessageListAPIViewSet
 from .feedback import FeedbackCUDAPIView, FeedbackDetailAPIAPIViewSet, ThreadTagUpdateViewSet

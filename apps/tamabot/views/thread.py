@@ -1,7 +1,6 @@
 from apps.common.views import AppAPIView,NonAuthenticatedAPIMixin,AppModelListAPIViewSet
 from apps.tamabot.models import Thread,Message 
-from apps.tamabot.serializers import TamaResponseSerializer,MessageFeedbackSerializer
-
+from apps.tamabot.serializers import TamaResponseSerializer,MessageSerializer,ThreadListSerializer
 from .system_messagev2 import love_hope_system_template_V2
 from .system_message import love_hope_system_template
 from langchain_core.prompts import ChatPromptTemplate
@@ -11,15 +10,12 @@ from django.http import StreamingHttpResponse
 from typing import Optional,Literal, List
 from pydantic import BaseModel, Field
 import requests
-from uuid import UUID
-from apps.common.serializers import AppReadOnlyModelSerializer
 from django.conf import settings
 import json
-# from rest_framework import serializers
+
 
 book_couch_link = settings.BOOK_COUCH_LINK
 therapist_url = settings.THERAPIST_URL
-
 
 
 class MentalHealthSupport(BaseModel):
@@ -50,7 +46,6 @@ class NewThreadAPIView(NonAuthenticatedAPIMixin,AppAPIView):
 
     
 class TamaResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
-
 
     def post(self, request, *args, **kwargs):
         """Handle POST request to for Tama answers """
@@ -131,31 +126,7 @@ class TamaResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
             return self.send_response({"ai_answer":ai_response})
         return self.send_error_response({"message":serializer.errors})
     
-
-
     
-class MessageSerializer(AppReadOnlyModelSerializer):
-    class Meta:
-        model = Message
-        fields = ['uuid', 'user_question', 'ai_answer','created']
-
-
-class RetrieveMessageAPIView(NonAuthenticatedAPIMixin,AppAPIView):
-    def get(self, request, thread_uuid: UUID):
-        try:
-            thread = Thread.objects.get(uuid=thread_uuid)
-        except Thread.DoesNotExist:
-            return self.send_error_response({"error": "Invalid thread ID"})
-        messages = thread.messages.all()
-        serializer = MessageSerializer(messages, many=True)
-        return self.send_response({"message": serializer.data})
-    
-class ThreadListSerializer(AppReadOnlyModelSerializer):
-    """Serializer class for Location list."""
-
-    class Meta(AppReadOnlyModelSerializer.Meta):
-        model = Thread
-        fields = ["uuid", "categories","is_book_couch","created","modified"]
 
 class ListThreadsViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
 
@@ -189,89 +160,6 @@ class MessageListAPIViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
             q=super().get_queryset()
             return q.filter(thread__uuid=thread_id)
         return Message.objects.none() 
-
-
-class FeedbackMessageAPIView(NonAuthenticatedAPIMixin,AppAPIView):
-    def post(self, request, *args, **kwargs):
-        serializer = MessageFeedbackSerializer(data=request.data)
-        if serializer.is_valid():
-            message_uuid = serializer.validated_data['message_uuid']
-            like = serializer.validated_data['like']
-            dislike = serializer.validated_data['dislike']
-            try:
-                # Fetch the message by its UUID
-                message = Message.objects.get(uuid=message_uuid)
-                if like and dislike:
-                    return self.send_error_response({'error': 'You cannot like and dislike the same message.'})
-               
-                
-                message.like = like
-                message.dislike = dislike
-                message.save()
-                return self.send_response({'message': 'Feedback successfully recorded'})
-            except Message.DoesNotExist:
-                # If the message does not exist
-                return self.send_error_response({'error': 'Message not found'})
-        return self.send_error_response(serializer.errors)
-                
-
-
-
-
-# class FeedbackMessageAPIView(NonAuthenticatedAPIMixin,AppAPIView):
-#     def post(self, request, *args, **kwargs):
-#         serializer = FeedbackSerializer(data=request.data)
-
-#         try:
-#             # Fetch the message by its UUID
-            
-#             message = Message.objects.get(uuid=message_uuid)
-            
-#             # Serialize the data for updating
-#             serializer = FeedbackSerializer(message, data=request.data, partial=True)
-            
-#             if serializer.is_valid():
-#                 # Save the updated fields
-#                 serializer.save()
-#                 return self.send_response({"success": True, "message": "Feedback updated successfully."})
-#             else:
-#                 return self.send_error_response({"success": False, "errors": serializer.errors})
-        
-#         except Message.DoesNotExist:
-#             return self.send_error_response({"success": False, "error": "Message not found."})
-
-
-    # def generate_data(self, text,thread_id):
-    #     system_template = love_hope_system_template
-    #     prompt_template = ChatPromptTemplate.from_messages([
-    #         ('system', system_template),
-    #         ('user', '{text}')
-    #     ])
-    #     model = ChatOpenAI(model="gpt-4o-mini", temperature=0.2, streaming=True)
-    #     parser = StrOutputParser()
-    #     chain = prompt_template | model | parser
-    #     ai_answer_chunks = []
-    #     for chunk in chain.stream({"text": text}):
-    #         ai_answer_chunks.append(chunk.strip())
-    #         yield f"{chunk}"
-    #     ai_answer = "".join(ai_answer_chunks)
-    #     thread = Thread.objects.get(uuid=thread_id)
-    #     Message.objects.create(
-    #         thread=thread,
-    #         user_question=text,
-    #         ai_answer=ai_answer
-    #     )
-        # save_ai_response_task.delay(thread_id, text, ai_answer)
-
-    # serialized_messages = MessageSerializer(messages, many=True).data
-    # return self.send_response(serialized_messages)
-    # response = StreamingHttpResponse(self.generate_data(user_question,thread_id), content_type='text/event-stream')
-    # response['Cache-Control'] = 'no-cache'  
-    # response["X-Accel-Buffering"] = "no"
-    
-    # return response
-
-
 
 
 class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
