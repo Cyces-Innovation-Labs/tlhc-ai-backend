@@ -12,6 +12,29 @@ from pydantic import BaseModel, Field
 import requests
 from django.conf import settings
 import json
+from django_filters import rest_framework as filters
+
+
+class ThreadFilter(filters.FilterSet):
+    categories = filters.CharFilter(method='filter_categories')
+    
+
+    class Meta:
+        model = Thread
+        fields = {
+            'created': ['gte', 'lte'],
+            'modified': ['gte', 'lte'],
+            'uuid': ['exact'],
+        }
+
+    def filter_categories(self, queryset, name, value):
+        """
+        Filter threads where the categories field contains the given value.
+        """
+        if value:
+            return queryset.filter(categories__contains=[value])
+        return queryset
+
 
 
 book_couch_link = settings.BOOK_COUCH_LINK
@@ -132,8 +155,9 @@ class ListThreadsViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
 
     queryset = Thread.objects.filter(messages__isnull=False).distinct().order_by("-created")
     serializer_class = ThreadListSerializer
-    filterset_fields = ["uuid"] 
-
+    filterset_class = ThreadFilter
+    # filterset_fields = {"created": ["gte", "lte"],"modified": ["gte", "lte"], "uuid": ["exact"]} 
+    search_fields = ["uuid"]
     all_table_columns = {
         "uuid": "Conversation ID",
         "categories": "Category",
@@ -142,11 +166,22 @@ class ListThreadsViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
         "modified": "End Date",
     }
 
+    # def filter_categories(self, queryset, name, value):
+    #     print("hEY")
+    #     """
+    #     Filter threads where the categories field contains the given value.
+    #     """
+    #     if value:
+    #         # Assuming `value` is a list or single value to filter against
+    #         return queryset.filter(categories__contains=[value])
+    #     return queryset
+
     def get_meta_for_table(self) -> dict:
         data = {
             "columns": self.get_table_columns()
         }
         return data
+
 
 class MessageListAPIViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
     """API to list all Branch"""
