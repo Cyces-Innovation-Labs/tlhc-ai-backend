@@ -2,7 +2,6 @@ from apps.common.serializers import AppWriteOnlyModelSerializer, AppReadOnlyMode
 from apps.tamabot.config import StatusChoices
 from apps.tamabot.models import Feedback, Thread
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
 
 class FeedbackCUDSerializer(AppWriteOnlyModelSerializer):
