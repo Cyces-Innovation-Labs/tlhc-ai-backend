@@ -18,4 +18,4 @@ class ThreadListSerializer(AppReadOnlyModelSerializer):
 
     class Meta(AppReadOnlyModelSerializer.Meta):
         model = Thread
-        fields = ["uuid","id", "categories","is_book_couch","created","modified"]
+        fields = ["uuid","id", "categories","is_book_couch","created","modified","status"]
