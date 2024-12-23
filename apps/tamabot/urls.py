@@ -9,7 +9,8 @@ from apps.tamabot.views import (
     FeedbackCUDAPIView,
     FeedbackDetailAPIAPIViewSet,
     ThreadTagUpdateViewSet,
-    MessageListAPIViewSet
+    MessageListAPIViewSet,
+    ThreadStatusUpdateViewSet,
 )
 
 router = SimpleRouter()
@@ -19,6 +20,7 @@ router.register("threads/list", ListThreadsViewSet)
 router.register("get_message/list", MessageListAPIViewSet)
 router.register("feedback/cud", FeedbackCUDAPIView)
 router.register("feedback/detail",FeedbackDetailAPIAPIViewSet)
+router.register("thread/status/update", ThreadStatusUpdateViewSet)
 router.register("thread/tag/update", ThreadTagUpdateViewSet)
 
 urlpatterns = [
