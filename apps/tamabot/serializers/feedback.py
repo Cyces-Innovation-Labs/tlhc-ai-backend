@@ -1,4 +1,5 @@
 from apps.common.serializers import AppWriteOnlyModelSerializer, AppReadOnlyModelSerializer, AppUpdateModelSerializer
+from apps.tamabot.config import StatusChoices
 from apps.tamabot.models import Feedback, Thread
 from rest_framework import serializers
 
@@ -51,3 +52,28 @@ class ThreadTagUpdateSerializer(AppUpdateModelSerializer):
     class Meta(AppUpdateModelSerializer.Meta):
         model = Thread
         fields = ["tag"]
+
+    def validate(self, attrs):
+        if attrs.get("tag", None) is None:
+            raise serializers.ValidationError({"error":"Tag is required"})
+        return super().validate(attrs)
+
+class ThreadStatusUpdateSerializer(AppUpdateModelSerializer):
+    """Add status Against Thread"""
+
+    class Meta(AppUpdateModelSerializer.Meta):
+        model = Thread
+        fields = ["status"]
+
+    def validate(self, attrs):
+
+        if attrs.get("status", None) is None:
+            raise serializers.ValidationError({"error":"Status is required"})
+        return super().validate(attrs)
+    
+    def get_meta(self) -> dict:
+        """Meta for Update API."""
+
+        return {
+            "status": [{"id": key, "name": str(value)} for key, value in StatusChoices.choices],
+        }

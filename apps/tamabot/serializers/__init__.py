@@ -1,2 +1,2 @@
 from .thread import TamaResponseSerializer,ThreadListSerializer,MessageSerializer
-from .feedback import FeedbackCUDSerializer, FeedbackDetailSerializer,ThreadTagUpdateSerializer
+from .feedback import FeedbackCUDSerializer, FeedbackDetailSerializer,ThreadTagUpdateSerializer, ThreadStatusUpdateSerializer
