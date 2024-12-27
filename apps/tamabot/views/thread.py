@@ -190,10 +190,14 @@ class MessageListAPIViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
     
     def get_queryset(self):
         
-        thread_id = self.request.query_params.get('thread_id') 
+        thread_id = self.request.query_params.get('thread_id')
+        reverse_order = self.request.query_params.get('reverse', 'false').lower() == 'true'
+
         if thread_id:
-            q=super().get_queryset()
-            return q.filter(thread__uuid=thread_id)
+            q = super().get_queryset().filter(thread__uuid=thread_id)
+            if reverse_order:
+                return q.order_by('-created')  
+            return q
         return Message.objects.none() 
 
 
