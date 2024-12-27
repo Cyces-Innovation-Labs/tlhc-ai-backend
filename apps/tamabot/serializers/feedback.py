@@ -69,7 +69,19 @@ class ThreadStatusUpdateSerializer(AppUpdateModelSerializer):
 
         if attrs.get("status", None) is None:
             raise serializers.ValidationError({"error":"Status is required"})
-        return super().validate(attrs)
+        if attrs.get("status", None) == StatusChoices.rejected:
+            if self.context["request"].data.get("feedback", None) is None:
+                raise serializers.ValidationError({"error": "Feedback is required"}) 
+            attrs["feedback"] = self.context["request"].data.get("feedback")
+        return attrs
+    
+    def update(self, instance, validated_data):
+
+        user = self.get_user().user
+        if validated_data["status"] == StatusChoices.rejected:
+            feedback = validated_data.pop("feedback")
+            Feedback.objects.create(thread=instance,feedback=feedback,feedback_given_by=user)
+        return super().update(instance, validated_data)
     
     def get_meta(self) -> dict:
         """Meta for Update API."""
