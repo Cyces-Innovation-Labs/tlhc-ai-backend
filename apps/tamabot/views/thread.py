@@ -23,8 +23,6 @@ class ThreadFilter(filters.FilterSet):
         model = Thread
         fields = {
             'created': ['gte', 'lte'],
-            'modified': ['gte', 'lte'],
-            'last_conversation': ['gte', 'lte'],
             'uuid': ['exact'],
         }
 
@@ -164,8 +162,7 @@ class ListThreadsViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
         "categories": "Category",
         "is_book_couch": "Book a couch",
         "created": "Start Date",
-        "modified": "End Date",
-        "last_conversation": "Last Conversation",
+        "last_conversation": "End Date",
     }
 
     # def filter_categories(self, queryset, name, value):
