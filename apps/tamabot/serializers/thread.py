@@ -10,7 +10,7 @@ class TamaResponseSerializer(serializers.Serializer):
 class MessageSerializer(AppReadOnlyModelSerializer):
     class Meta:
         model = Message
-        fields = ['uuid', 'user_question', 'ai_answer','created']
+        fields = ['uuid', 'user_question', 'ai_answer','created','therapist']
 
 
 class ThreadListSerializer(AppReadOnlyModelSerializer):

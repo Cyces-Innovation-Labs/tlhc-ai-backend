@@ -33,6 +33,7 @@ class Message(BaseModel):
     ai_answer = models.TextField()
     like = models.BooleanField(default=False)
     dislike = models.BooleanField(default=False)
+    therapist = models.JSONField(default=list, blank=True)
     # conversations = models.JSONField(default=list)
 
     # def add_conversations(self, human, ai):
