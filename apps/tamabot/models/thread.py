@@ -16,6 +16,7 @@ class Thread(BaseModel):
         choices=StatusChoices.choices,
         **COMMON_BLANK_AND_NULLABLE_FIELD_CONFIG,
     )
+    last_conversation=models.DateTimeField(null=True, blank=True)
 
 
     def add_categories_to_thread(self,thread, new_categories):

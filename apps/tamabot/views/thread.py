@@ -24,6 +24,7 @@ class ThreadFilter(filters.FilterSet):
         fields = {
             'created': ['gte', 'lte'],
             'modified': ['gte', 'lte'],
+            'last_conversation': ['gte', 'lte'],
             'uuid': ['exact'],
         }
 
@@ -164,6 +165,7 @@ class ListThreadsViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
         "is_book_couch": "Book a couch",
         "created": "Start Date",
         "modified": "End Date",
+        "last_conversation": "Last Conversation",
     }
 
     # def filter_categories(self, queryset, name, value):
@@ -276,11 +278,13 @@ class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
                     ai_table_response = "".join(ai_table_chunks)
                     ai_response=f"{ai_response}\n\n{ai_table_response}"
 
-        Message.objects.create(
+        message=Message.objects.create(
                 thread=thread,
                 user_question=user_question,
                 ai_answer=ai_response,
                 )
+        thread.last_conversation = message.created
+        thread.save()
         yield f"data: {json.dumps({'type': 'status', 'content': 'finished'})}\n\n"
 
         
