@@ -3,7 +3,6 @@ from rest_framework.routers import SimpleRouter
 
 from apps.tamabot.views import (   
     NewThreadAPIView,
-    TamaResponseAPIView,
     ListThreadsViewSet,
     TamaStreamingResponseAPIView,
     FeedbackCUDAPIView,
@@ -26,6 +25,5 @@ router.register("thread/tag/update", ThreadTagUpdateViewSet)
 urlpatterns = [
     path(f"{API_URL_PREFIX}tama-streaming-response/", TamaStreamingResponseAPIView.as_view()),
     path(f"{API_URL_PREFIX}new-thread/", NewThreadAPIView.as_view()),
-    path(f"{API_URL_PREFIX}tama-response/", TamaResponseAPIView.as_view()),
     path(f"{API_URL_PREFIX}", include(router.urls)),
 ]

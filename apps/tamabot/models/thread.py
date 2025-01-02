@@ -8,7 +8,6 @@ from apps.tamabot.config import StatusChoices
 class Thread(BaseModel):
 
     tag = models.CharField( max_length=COMMON_CHAR_FIELD_MAX_LENGTH,**COMMON_BLANK_AND_NULLABLE_FIELD_CONFIG,)
-    #faizermodel
     is_book_couch=models.BooleanField(default=False)
     categories =models.JSONField(default=list, blank=True)
     status = models.CharField(
@@ -34,17 +33,3 @@ class Message(BaseModel):
     like = models.BooleanField(default=False)
     dislike = models.BooleanField(default=False)
     therapist = models.JSONField(default=list, blank=True)
-    # conversations = models.JSONField(default=list)
-
-    # def add_conversations(self, human, ai):
-    #     """Add a new message to the thread"""
-
-    #     self.conversations.append({
-    #         'role': 'user',
-    #         'content': human,
-    #     })
-    #     self.conversations.append({
-    #         'role': 'assistant',
-    #         'content': ai,
-    #     })
-    #     self.save()
