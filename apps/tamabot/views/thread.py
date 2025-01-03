@@ -134,7 +134,7 @@ class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
             if book_couch_link in ai_response:
                 yield f"data: {json.dumps({'type': 'fetching_service', 'content': 'fetching'})}\n\n"
                 thread.is_book_couch = True
-                llm = ChatOpenAI(model="gpt-4o-mini",temperature=0.4)
+                llm = ChatOpenAI(model="gpt-4o-min",temperature=0.4)
                 structured_llm = llm.with_structured_output(MentalHealthSupport)
                 new_question = ('user',user_question)
                 formatted_messages.append(new_question)
