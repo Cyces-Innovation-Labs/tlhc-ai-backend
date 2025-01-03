@@ -178,9 +178,14 @@ APP_DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 # AWS S3 Storage Bucket
 # -------------------------------------------------------------------------------
-AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY")
-AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_KEY")
-AWS_STORAGE_BUCKET_NAME = env.str("AWS_BUCKET_NAME")
+AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
+# AWS_STORAGE_BUCKET_NAME = env.str("AWS_BUCKET_NAME")
+AWS_REGION_NAME = env.str("AWS_REGION_NAME")
+# AWS CloudWatch log Storage
+# -------------------------------------------------------------------------------
+AWS_LOG_GROUP = env.str("AWS_LOG_GROUP")
+AWS_LOG_STREAM = env.str("AWS_LOG_STREAM")
 
 AWS_QUERYSTRING_AUTH = False
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"

@@ -11,6 +11,7 @@ import inflect
 from dateutil import tz
 from django.conf import settings
 from requests import request
+import boto3
 
 
 def create_log(data: typing.Any, category: str):
@@ -192,3 +193,57 @@ def get_month_in_word(month):
 def number_to_words(number):
     p = inflect.engine()
     return p.number_to_words(number)
+
+
+# def log_to_cloudwatch (error_message=None):
+#     try:
+#         data={
+#                 "error_message ": error_message,
+#             }
+#         client = boto3.client("logs", region_name=settings.AWS_REGION_NAME)
+#         log_group_name = settings.AWS_LOG_GROUP
+#         log_stream_name = settings.AWS_LOG_STREAM
+#         log_event = {
+#                 "message": json.dumps(data),
+#             }
+#         print(log_group_name,log_stream_name)
+#         response = client.put_log_events(
+#                 logGroupName=log_group_name,
+#                 logStreamName=log_stream_name,
+#                 logEvents=[log_event],
+#             )
+#             # Print the response from CloudWatch Logs API
+#         print(f"CloudWatch Logs response: {response}")
+#     except Exception as e:
+#         # Print any exceptions for debugging
+#         print(f"Error logging to CloudWatch: {e}")
+
+
+def log_to_cloudwatch(error_message=None):
+    try:
+        data = {
+            "error_message": error_message,  # Removed extra space in the key
+        }
+        
+        client = boto3.client("logs", region_name=settings.AWS_REGION_NAME)
+        log_group_name = settings.AWS_LOG_GROUP
+        log_stream_name = settings.AWS_LOG_STREAM
+        
+        log_event = {
+            "message": json.dumps(data),
+            "timestamp": int(time.time() * 1000) 
+        }
+        
+        
+        response = client.put_log_events(
+            logGroupName=log_group_name,
+            logStreamName=log_stream_name,
+            logEvents=[log_event]
+        )
+        
+        # Print the response from CloudWatch Logs API
+        print(f"CloudWatch Logs response: {response}")
+    
+    except Exception as e:
+        # Print any exceptions for debugging
+        print(f"Error logging to CloudWatch: {e}")
