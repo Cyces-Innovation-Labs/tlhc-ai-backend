@@ -17,7 +17,7 @@ services:
       - supervisor
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    command: bash -c "gunicorn config.asgi -b 0.0.0.0:8000 --chdir=/app -k uvicorn.workers.UvicornWorker --reload --workers 2 --threads 2"
+    command: bash -c "daphne -b 0.0.0.0 -p 8000 config.asgi:application"
 
   redis:
     image: redis:latest
