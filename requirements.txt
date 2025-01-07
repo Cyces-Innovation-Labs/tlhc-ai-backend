@@ -21,3 +21,9 @@ python-dotenv==1.0.1
 djangorestframework-simplejwt==5.2.2
 PyJWT==2.8.0
 psycopg2-binary==2.9.9
+channels==4.2.0
+daphne==4.1.2
+channels-redis==4.2.1
+redis==5.1.1
+adrf==0.1.9
+uvicorn==0.34.0

@@ -17,7 +17,7 @@ services:
       - supervisor
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    command: bash -c "gunicorn config.wsgi -b 0.0.0.0:8000 --chdir=/app --reload"
+    command: bash -c "daphne -b 0.0.0.0 -p 8000 config.asgi:application"
 
   redis:
     image: redis:latest

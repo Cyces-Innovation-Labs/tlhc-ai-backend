@@ -104,47 +104,147 @@ class MessageListAPIViewSet(NonAuthenticatedAPIMixin,AppModelListAPIViewSet):
             return q
         return Message.objects.none() 
     
-class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
+# This Is Sychronous Code
+    
+# class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
 
-    def gen_ai(self,formatted_messages,user_question,thread):
-        try:
-            system_template=love_hope_system_template_V2
-            prompt_template = ChatPromptTemplate.from_messages([
-            ('system', system_template),
-            *formatted_messages,
-            ('user', '{text}')
-                ])
-            yield f"data: {json.dumps({'type': 'status', 'content': 'started'})}\n\n"
-            model = ChatOpenAI(model="gpt-4o-mini",temperature=0.2,max_tokens=300)
-            parser = StrOutputParser()
-            chain = prompt_template | model | parser
-            ai_answer_chunks = []
-            for chunk in chain.stream({"text": user_question }):
-                ai_answer_chunks.append(chunk)
-                yield f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
+#     def gen_ai(self,formatted_messages,user_question,thread):
+#         try:
+#             system_template=love_hope_system_template_V2
+#             prompt_template = ChatPromptTemplate.from_messages([
+#             ('system', system_template),
+#             *formatted_messages,
+#             ('user', '{text}')
+#                 ])
+#             yield f"data: {json.dumps({'type': 'status', 'content': 'started'})}\n\n"
+#             model = ChatOpenAI(model="gpt-4o-mini",temperature=0.2,max_tokens=300)
+#             parser = StrOutputParser()
+#             chain = prompt_template | model | parser
+#             ai_answer_chunks = []
+#             for chunk in chain.stream({"text": user_question }):
+#                 ai_answer_chunks.append(chunk)
+#                 yield f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
                 
             
-            ai_response = "".join(ai_answer_chunks)
-            message_obj=Message.objects.create(
-                    thread=thread,
-                    user_question=user_question,
-                    ai_answer=ai_response,
-                    )
-            yield f"data: {json.dumps({'type': 'status', 'content': 'completed'})}\n\n"
-            if book_couch_link in ai_response:
-                yield f"data: {json.dumps({'type': 'fetching_service', 'content': 'fetching'})}\n\n"
-                thread.is_book_couch = True
+#             ai_response = "".join(ai_answer_chunks)
+#             message_obj=Message.objects.create(
+#                     thread=thread,
+#                     user_question=user_question,
+#                     ai_answer=ai_response,
+#                     )
+#             yield f"data: {json.dumps({'type': 'status', 'content': 'completed'})}\n\n"
+#             if book_couch_link in ai_response:
+#                 yield f"data: {json.dumps({'type': 'fetching_service', 'content': 'fetching'})}\n\n"
+#                 thread.is_book_couch = True
+#                 llm = ChatOpenAI(model="gpt-4o-mini",temperature=0.4)
+#                 structured_llm = llm.with_structured_output(MentalHealthSupport)
+#                 new_question = ('user',user_question)
+#                 formatted_messages.append(new_question)
+#                 a=structured_llm.invoke(f'{formatted_messages}')
+#                 url = therapist_url
+#                 headers = {
+#                     "Content-Type": "application/json"
+#                 }
+#                 if a.reasons:
+#                     thread.add_categories_to_thread(thread,a.reasons)
+#                     reasons_param = ','.join(a.reasons)
+#                 else:
+#                     reasons_param = None
+#                 params = {
+#                     "counselling_type": a.councelling_for,    
+#                     "level_of_experience": a.level_of_experience, 
+#                     "reasons": reasons_param,                         
+#                 }
+#                 response = requests.get(url, headers=headers, params=params)
+#                 if response.status_code==200:
+#                     data = response.json()
+#                     therapist_data = data.get('data', {}).get('results', [])
+#                     yield f"data: {json.dumps({'type': 'therapist_details', 'content': therapist_data})}\n\n"
+#                     message_obj.therapist = therapist_data
+#                     message_obj.save()
+#             thread.last_conversation = message_obj.created
+#             thread.save()
+#             yield f"data: {json.dumps({'type': 'status', 'content': 'finished'})}\n\n"
+#         except Exception as e:
+#                 error_message = f"Error occurred: {str(e)}"
+#                 print(error_message)
+#                 # log_to_cloudwatch(error_message=error_message)
+
+#     def post(self, request, *args, **kwargs):
+#         """Handle POST request to for Tama answers """
+#         serializer = TamaResponseSerializer(data=request.data)
+#         if serializer.is_valid():
+#             try:
+#                 user_question = serializer.validated_data['user_question']
+#                 thread_id = serializer.validated_data['thread_id']
+#                 try:
+#                     thread = Thread.objects.get(uuid=thread_id)
+#                 except Thread.DoesNotExist:
+#                     return self.send_error_response({"error": "Invalid thread ID"})    
+#                 messages = thread.messages.order_by('-created').values('user_question', 'ai_answer')[:6]
+#                 messages = messages[::-1]
+#                 formatted_messages = []
+#                 for msg in messages:
+#                     formatted_messages.append(("user", msg['user_question']))
+#                     formatted_messages.append(("assistant", msg['ai_answer']))
+#                 response = StreamingHttpResponse(self.gen_ai(formatted_messages,user_question,thread), content_type='text/event-stream')
+#                 response['Cache-Control'] = 'no-cache'  
+#                 response["X-Accel-Buffering"] = "no" 
+#                 return response
+#             except Exception as e:
+#                 error_message = f"Error occurred: {str(e)}"
+#                 print(error_message)
+#                 # log_to_cloudwatch(error_message=error_message)
+#         return self.send_error_response({"message":serializer.errors})
+
+
+
+
+
+from adrf.views import APIView
+from asgiref.sync import sync_to_async
+from rest_framework.response import Response
+from rest_framework import status
+import httpx
+
+
+class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,APIView):
+
+    async def gen_ai(self,formatted_messages,user_question,thread):    
+        system_template=love_hope_system_template_V2
+        prompt_template = ChatPromptTemplate.from_messages([
+        ('system', system_template),
+        *formatted_messages,
+        ('user', '{text}')
+            ])
+        yield  f"data: {json.dumps({'type': 'status', 'content': 'started'})}\n\n"
+        model = ChatOpenAI(model="gpt-4o-mini",temperature=0.2,max_tokens=300)
+        parser = StrOutputParser()
+        chain = prompt_template | model | parser
+        ai_answer_chunks = []
+        async for chunk in chain.astream({"text": user_question }):
+            ai_answer_chunks.append(chunk)
+            yield  f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
+        ai_response = "".join(ai_answer_chunks)
+        yield f"data: {json.dumps({'type': 'status', 'content': 'completed'})}\n\n"
+        is_book_couch=thread.is_book_couch
+        reasons_list=[]
+        therapist_data=[]
+        if book_couch_link in ai_response:
+            yield f"data: {json.dumps({'type': 'fetching_service', 'content': 'fetching'})}\n\n"
+            is_book_couch = True
+            try:
                 llm = ChatOpenAI(model="gpt-4o-mini",temperature=0.4)
                 structured_llm = llm.with_structured_output(MentalHealthSupport)
                 new_question = ('user',user_question)
                 formatted_messages.append(new_question)
-                a=structured_llm.invoke(f'{formatted_messages}')
+                a=await structured_llm.ainvoke(f'{formatted_messages}')
                 url = therapist_url
                 headers = {
                     "Content-Type": "application/json"
                 }
                 if a.reasons:
-                    thread.add_categories_to_thread(thread,a.reasons)
+                    reasons_list = a.reasons
                     reasons_param = ','.join(a.reasons)
                 else:
                     reasons_param = None
@@ -153,42 +253,60 @@ class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,AppAPIView):
                     "level_of_experience": a.level_of_experience, 
                     "reasons": reasons_param,                         
                 }
-                response = requests.get(url, headers=headers, params=params)
-                if response.status_code==200:
+                async with httpx.AsyncClient() as client:
+                    response = await client.get(url, headers=headers, params=params)
+                if response.status_code == 200:
                     data = response.json()
                     therapist_data = data.get('data', {}).get('results', [])
                     yield f"data: {json.dumps({'type': 'therapist_details', 'content': therapist_data})}\n\n"
-                    message_obj.therapist = therapist_data
-                    message_obj.save()
-            thread.last_conversation = message_obj.created
-            thread.save()
-            yield f"data: {json.dumps({'type': 'status', 'content': 'finished'})}\n\n"
-        except Exception as e:
-                error_message = f"Error occurred: {str(e)}"
-                log_to_cloudwatch(error_message=error_message)
+            except:
+                yield f"data: {json.dumps({'type': 'therapist_details', 'content': therapist_data})}\n\n"
+        message_obj = await sync_to_async(Message.objects.create)(
+        thread=thread,
+        user_question=user_question,
+        ai_answer=ai_response,
+        therapist=therapist_data
+        )
+        thread.is_book_couch = is_book_couch
+        thread.last_conversation = message_obj.created
+        if reasons_list:
+        # Add categories to the thread asynchronously
+            await sync_to_async(thread.add_categories_to_thread)(thread, reasons_list)
+        else:
+        # Save the thread asynchronously
+            await sync_to_async(thread.save)()
 
-    def post(self, request, *args, **kwargs):
+        yield f"data: {json.dumps({'type': 'status', 'content': 'finished'})}\n\n"
+
+
+    def get_thread_messages(self,thread):
+        messages = thread.messages.order_by('-created').values('user_question', 'ai_answer')[:6]
+        messages = messages[::-1]
+        formatted_messages = []
+        for msg in messages:
+            formatted_messages.append(("user", msg['user_question']))
+            formatted_messages.append(("assistant", msg['ai_answer']))
+        return formatted_messages  
+
+    async def post(self, request, *args, **kwargs):
         """Handle POST request to for Tama answers """
         serializer = TamaResponseSerializer(data=request.data)
         if serializer.is_valid():
-            try:
+            try:        
                 user_question = serializer.validated_data['user_question']
                 thread_id = serializer.validated_data['thread_id']
                 try:
-                    thread = Thread.objects.get(uuid=thread_id)
+                    thread = await sync_to_async(Thread.objects.get)(uuid=thread_id)
                 except Thread.DoesNotExist:
-                    return self.send_error_response({"error": "Invalid thread ID"})    
-                messages = thread.messages.order_by('-created').values('user_question', 'ai_answer')[:6]
-                messages = messages[::-1]
-                formatted_messages = []
-                for msg in messages:
-                    formatted_messages.append(("user", msg['user_question']))
-                    formatted_messages.append(("assistant", msg['ai_answer']))
-                response = StreamingHttpResponse(self.gen_ai(formatted_messages,user_question,thread), content_type='text/event-stream')
+                    return Response({"message": f"Thread:{thread_id} does not exist."}, status=status.HTTP_404_NOT_FOUND)
+                messages = await sync_to_async(self.get_thread_messages)(thread)
+                response = StreamingHttpResponse(self.gen_ai(messages,user_question,thread), content_type='text/event-stream')
                 response['Cache-Control'] = 'no-cache'  
                 response["X-Accel-Buffering"] = "no" 
                 return response
             except Exception as e:
-                error_message = f"Error occurred: {str(e)}"
-                log_to_cloudwatch(error_message=error_message)
-        return self.send_error_response({"message":serializer.errors})
+                error_message = f"An unexpected error occurred: {str(e)}"
+                return Response({"message": error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return  Response({"message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+   

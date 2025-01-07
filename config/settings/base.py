@@ -14,7 +14,7 @@ ALLOWED_HOSTS = ["*"]
 
 # CSRF
 # ------------------------------------------------------------------------------
-CSRF_TRUSTED_ORIGINS = ["http://localhost"]
+CSRF_TRUSTED_ORIGINS = ["http://0.0.0.0:8000","http://127.0.0.1:8000"]
 
 # Environment Helpers
 # ------------------------------------------------------------------------------
@@ -42,6 +42,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    "adrf",
     # rest api
     "rest_framework",
     "rest_framework.authtoken",
@@ -51,6 +52,7 @@ THIRD_PARTY_APPS = [
 ]
 
 CUSTOM_APPS = [
+    "channels",
     "apps.common",
     "apps.access",
     "apps.tamabot",
@@ -70,11 +72,19 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}
 # Urls
 # ------------------------------------------------------------------------------
 ROOT_URLCONF = "config.urls"
 WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = 'config.asgi.application'
 APPEND_SLASH = True
 
 # Templates
