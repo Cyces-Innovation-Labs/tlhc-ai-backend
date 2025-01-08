@@ -48,8 +48,10 @@ class MentalHealthSupport(BaseModel):
     level_of_experience: Optional[Literal[ "basic","advance","expert"]]=Field(
           default="basic", description="Expectation of therapist level of experience by the user"
     )
-    reasons:Optional[List[Literal[ "Trauma","Mental Illness","Grief and Loss","Anxiety","Relationship Issues"]]]=Field(
-          default=None, description="fetch the Reasons for the user's problems as much as possible"
+    reasons:Optional[List[Literal[ "Trauma/PTSD","Mental Illness","Grief and Loss","Anxiety","Relationship Issues","Depression","Family Concerns",
+    "Self-Esteem","Anger Management","Substance Abuse","Eating Disorders","LGBTQ+ Related Concerns","Body Image Issues","Parenting Challenges","Phobias",
+    "Postpartum Depression","Burnout","Coping with Medical Conditions","Coping with Disability","General Stress"]]]=Field(
+    default=None, description="fetch Only the Reasons given above  which aligns to the user's problems as much as possible"
     )
 
 class NewThreadAPIView(NonAuthenticatedAPIMixin,AppAPIView):
