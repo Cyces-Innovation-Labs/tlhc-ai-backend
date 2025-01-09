@@ -1,6 +1,6 @@
 from .base import *  # noqa & pylint: disable=wildcard-import
 
-DEBUG = False
+DEBUG = True
 
 # Database Connection
 # ------------------------------------------------------------------------------
