@@ -219,19 +219,24 @@ class TamaStreamingResponseAPIView(NonAuthenticatedAPIMixin,APIView):
         *formatted_messages,
         ('user', '{text}')
             ])
-        yield  f"data: {json.dumps({'type': 'status', 'content': 'started'})}\n\n"
-        model = ChatOpenAI(model="gpt-4o-mini",temperature=0.2,max_tokens=300)
-        parser = StrOutputParser()
-        chain = prompt_template | model | parser
-        ai_answer_chunks = []
-        async for chunk in chain.astream({"text": user_question }):
-            ai_answer_chunks.append(chunk)
-            yield  f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
-        ai_response = "".join(ai_answer_chunks)
-        yield f"data: {json.dumps({'type': 'status', 'content': 'completed'})}\n\n"
         is_book_couch=thread.is_book_couch
         reasons_list=[]
         therapist_data=[]
+        yield  f"data: {json.dumps({'type': 'status', 'content': 'started'})}\n\n"
+        try:    
+            model = ChatOpenAI(model="gpt-4o-mini",temperature=0.2,max_tokens=300)
+            parser = StrOutputParser()
+            chain = prompt_template | model | parser
+            ai_answer_chunks = []
+            async for chunk in chain.astream({"text": user_question }):
+                ai_answer_chunks.append(chunk)
+                yield  f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
+            ai_response = "".join(ai_answer_chunks)
+        except Exception as e:
+            ai_response = "Tama is in High Demand, Please Try Again in Few Minutes"
+            yield  f"data: {json.dumps({'type': 'message_delta', 'content': ai_response})}\n\n"
+        yield f"data: {json.dumps({'type': 'status', 'content': 'completed'})}\n\n"
+
         if book_couch_link in ai_response:
             yield f"data: {json.dumps({'type': 'fetching_service', 'content': 'fetching'})}\n\n"
             is_book_couch = True
