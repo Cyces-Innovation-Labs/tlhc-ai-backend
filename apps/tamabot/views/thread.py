@@ -24,7 +24,7 @@ class ThreadFilter(filters.FilterSet):
     class Meta:
         model = Thread
         fields = {
-            'created': ['gte', 'lte'],
+            'created': ['date__gte', 'date__lte'],
             'uuid': ['exact'],
         }
 
