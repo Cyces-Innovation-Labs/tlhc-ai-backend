@@ -115,6 +115,11 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
+# Media
+# ------------------------------------------------------------------------------
+MEDIA_URL = "/media/"
+MEDIA_ROOT = str(APPS_DIR / "media")
+
 # Database
 # ------------------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
