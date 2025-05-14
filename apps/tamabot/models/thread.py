@@ -2,7 +2,7 @@ from django.db import models
 
 
 from apps.common.models import COMMON_CHAR_FIELD_MAX_LENGTH, COMMON_BLANK_AND_NULLABLE_FIELD_CONFIG, BaseModel
-from apps.tamabot.config import StatusChoices
+from apps.tamabot.config import ChatbotTypeChoices, StatusChoices
 
 
 class Thread(BaseModel):
@@ -16,6 +16,7 @@ class Thread(BaseModel):
         **COMMON_BLANK_AND_NULLABLE_FIELD_CONFIG,
     )
     last_conversation=models.DateTimeField(null=True, blank=True)
+    chatbot_type = models.CharField( max_length=COMMON_CHAR_FIELD_MAX_LENGTH, choices=ChatbotTypeChoices.choices, default=ChatbotTypeChoices.emotional)
 
 
     def add_categories_to_thread(self,thread, new_categories):
