@@ -1,8 +1,10 @@
-version: "3"
+version: "3.8"
 
 services:
   postgres:
-    image: ankane/pgvector:latest-pg17
+    build:
+      context: .
+      dockerfile: Dockerfile.pgvector
     container_name: postgres-container
     env_file:
       - ../../.env
