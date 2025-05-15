@@ -1,10 +1,8 @@
-version: "3.8"
+version: "3"
 
 services:
   postgres:
-    build:
-      context: .
-      dockerfile: Dockerfile.pgvector
+    image: postgres:latest
     container_name: postgres-container
     env_file:
       - ../../.env
