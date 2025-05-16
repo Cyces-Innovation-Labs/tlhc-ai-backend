@@ -20,7 +20,7 @@ import json
 from django_filters import rest_framework as filters
 from apps.common.helpers import log_to_cloudwatch
 from urllib.parse import urlparse
-from langchain_community.document_loaders import WebBaseLoader
+from langchain_community.document_loaders.sitemap import SitemapLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 from langchain_postgres.vectorstores import PGVector
@@ -618,7 +618,7 @@ class UrlScrapingAPIView(NonAuthenticatedAPIMixin, AppAPIView):
                 continue
 
             try:
-                loader = WebBaseLoader(url)
+                loader = SitemapLoader(url)
                 documents = loader.load()
                 text_chunks = self.split_documents(documents)
                 metadatas = {"url": url}
