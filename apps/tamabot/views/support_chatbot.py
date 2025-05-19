@@ -19,6 +19,8 @@ def support_chatbot_prompt(doc):
     Do **not** proceed if the user is in an **emergency or crisis situation** — instead, advise them to contact emergency services or a local helpline.
     ---
 
+    VERY IMPORTANT : "If the user query mentions or asks about a therapist or therapists, do not call the generate_therapist_tool. Instead, respond naturally based on existing information, or ask a clarifying question if needed."
+
     When any of the above conditions are true, begin asking one question at a time to collect therapy preferences. Ask in this exact order:
     1. What are the reasons you're seeking therapy?
     2. What language do you prefer?
@@ -34,8 +36,6 @@ def support_chatbot_prompt(doc):
 
     **Only ask the next question after the user has answered the previous one.**
     **Once all preferences are collected, call the `generate_booking_link` tool with the gathered values.**
-
-    VERY IMPORTANT : "If the user query mentions or asks about a therapist or therapists, do not call the generate_therapist_tool. Instead, respond naturally based on existing information, or ask a clarifying question if needed."
     
     Caution: Always Stick to Support Assistant Role
     Do not deviate from the support role. Never break character.
