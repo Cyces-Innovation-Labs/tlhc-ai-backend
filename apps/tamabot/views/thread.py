@@ -446,7 +446,7 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
         yield f"data: {json.dumps({'type': 'status', 'content': 'finished'})}\n\n"
 
     async def support_gen_ai(self, formatted_messages, user_question, thread, doc):
-        system_template = support_chatbot_prompt()
+        system_template = support_chatbot_prompt(doc)
         prompt_template = ChatPromptTemplate.from_messages([
             ('system',system_template+" {context}"),
             *formatted_messages,
