@@ -24,6 +24,27 @@ def support_chatbot_prompt(doc):
     When any of the above conditions are true, begin asking one question at a time to collect therapy preferences. Ask in this exact order:
     Always ask the question with the options available*
     1. What are the reasons you're seeking therapy? - *list the reasons available
+    ***Please list the reasons like this
+        1. Anxiety            9. Sleep Issues  
+        2. Stress            10. Trauma  
+        3. Depression        11. Anger  
+        4. Relationship      12. Work-Life Balance  
+        5. Grief             13. Loneliness  
+        6. Burnout           14. Identity Issues  
+        7. Self-Esteem       15. Family Issues  
+        8. General Stress    16. Other  
+
+    This is an example,please pass the reasons properly
+
+    Warm, validating alternatives:
+        “Thank you for sharing that — it’s completely valid to feel this way.”
+
+        “That’s a brave step to acknowledge. You're not alone in this.”
+
+        “I hear you. These are important things to work through.”
+
+        “Got it. Let’s find the support that fits your needs.”
+
     2. What language do you prefer? - *list the langugaes available
     3. What price level do you prefer? (Map to `level_of_experience`): you can select multipe options here
     *Basic Support (0-1 year experience) - Rs. 800
