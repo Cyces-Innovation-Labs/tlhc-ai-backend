@@ -388,6 +388,10 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
                     "args": json.loads(tool_call_args),
                 }
 
+                params = {
+                    k: ",".join(f'{item}' for item in v) if isinstance(v, list) else v
+                    for k, v in tool_call["args"].items()
+                }
                 reasons_list = json.loads(tool_call_args).get("reasons", [])
             
                 # Call your therapist API
@@ -396,7 +400,7 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
                 }
 
                 async with httpx.AsyncClient() as client:
-                    response = await client.get(therapist_url, headers=headers, params=tool_call["args"])
+                    response = await client.get(therapist_url, headers=headers, params=params)
                 
                 if response.status_code == 200:
                     data = response.json()
@@ -494,7 +498,6 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
                     k: ",".join(f'{item}' for item in v) if isinstance(v, list) else v
                     for k, v in tool_call["args"].items()
                 }
-                print(params)
 
                 reasons_list = json.loads(tool_call_args).get("reasons", [])
             
@@ -527,7 +530,8 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
                         "context": doc
                     }):
                         ai_answer_chunks.append(chunk)
-                        yield f"data: {json.dumps({'type': 'tool_calling', 'content': chunk, 'tool_response':tool_response})}\n\n"
+                        yield f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
+                    yield f"data: {json.dumps({'type': 'tool_calling', 'tool_response': tool_response})}\n\n"
             ai_response = "".join(ai_answer_chunks)
         except Exception as e:
             print(e)
