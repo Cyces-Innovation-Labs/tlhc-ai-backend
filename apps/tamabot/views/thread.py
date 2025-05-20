@@ -491,7 +491,7 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
                     "args": json.loads(tool_call_args),
                 }
                 params = {
-                    k: ",".join(f'"{item}"' for item in v) if isinstance(v, list) else v
+                    k: ",".join(f'{item}' for item in v) if isinstance(v, list) else v
                     for k, v in tool_call["args"].items()
                 }
                 print(params)
