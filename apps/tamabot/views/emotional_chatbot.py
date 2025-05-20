@@ -45,6 +45,7 @@ class MentalHealthReason(str, Enum):
 class Location(str, Enum):
     online = "online"
     offline = "offline"
+    both = "both"
 
 
 class MentalHealthSupportTool(BaseModel):
@@ -54,10 +55,10 @@ class MentalHealthSupportTool(BaseModel):
         ...,
         description="The reasons the user is seeking therapy, such as anxiety, stress, etc."
     )
-    language: LanguageType = Field(
+    language: List[LanguageType] = Field(
         ..., description="The language mode of counselling the user is looking for."
     )
-    level_of_experience: ExperienceLevel = Field(
+    level_of_experience: List[ExperienceLevel] = Field(
         ..., description="The price in which the user seeks the therapy (Basic-Rs.800, Advanced-Rs.1200, Expertise-Rs.2250)"
     )
     mode_of_counselling: Location = Field(
