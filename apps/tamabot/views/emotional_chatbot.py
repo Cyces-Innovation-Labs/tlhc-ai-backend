@@ -98,7 +98,7 @@ def emotional_chatbot_prompt():
         * Expert Support (3+ year experience) - Rs. 2250
 
         4. What mode of counselling do you prefer? (online or offline or both)  
-        - If offline, inform the user that the session will be held at:  
+        *** If offline, inform the user that the session will be held at:  
             **The Love Hope Company, No.25, Thirumalai Road, T.Nagar, Chennai - 600 017**  
             **Office hours: 12:00 PM - 08:00 PM | Sunday Holiday**
 
