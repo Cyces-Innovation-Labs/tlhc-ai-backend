@@ -25,7 +25,7 @@ def support_chatbot_prompt(doc):
     Always ask the question with the options available*
     1. What are the reasons you're seeking therapy? - *list the reasons available
     2. What language do you prefer? - *list the langugaes available
-    3. What price level do you prefer? (Map to `level_of_experience`:
+    3. What price level do you prefer? (Map to `level_of_experience`): you can select multipe options here
     *Basic Support (0-1 year experience) - Rs. 800
     *Advanced Support (1-3 year experience) - Rs. 1200
     *Expert Support (3+ year experience) - Rs. 2250

@@ -59,7 +59,7 @@ class MentalHealthSupportTool(BaseModel):
         ..., description="The language mode of counselling the user is looking for."
     )
     level_of_experience: List[ExperienceLevel] = Field(
-        ..., description="The price in which the user seeks the therapy (Basic-Rs.800, Advanced-Rs.1200, Expertise-Rs.2250)"
+        ..., description="The price in which the user seeks the therapy (Basic-Rs.800, Advanced-Rs.1200, Expertise-Rs.2250) "
     )
     mode_of_counselling: Location = Field(
         ..., description="The location the therapist preferes for taking the therapy either (Online/Offline)"
@@ -90,13 +90,14 @@ def emotional_chatbot_prompt():
 
         When any of the above conditions are true, **begin asking one question at a time** to collect therapy preferences. Ask in this exact order:
 
-        1. What are the reasons you're seeking therapy?
-        2. What language do you prefer?  
-        3. What price level do you prefer? (Map to `level_of_experience`:  
-        - Rs 800 = Basic  
-        - Rs 1200 = Advanced  
-        - Rs 2250 = Expert)  
-        4. What mode of counselling do you prefer? (online or offline)  
+        1. What are the reasons you're seeking therapy? - *list the reasons available
+        2. What language do you prefer?  - *list the langugaes available
+        3. What price level do you prefer? (Map to `level_of_experience`):  you can select multipe options here
+        * Basic Support (0-1 year experience) - Rs. 800
+        * Advanced Support (1-3 year experience) - Rs. 1200
+        * Expert Support (3+ year experience) - Rs. 2250
+
+        4. What mode of counselling do you prefer? (online or offline or both)  
         - If offline, inform the user that the session will be held at:  
             **The Love Hope Company, No.25, Thirumalai Road, T.Nagar, Chennai - 600 017**  
             **Office hours: 12:00 PM - 08:00 PM | Sunday Holiday**
