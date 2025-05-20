@@ -39,10 +39,12 @@ def support_chatbot_prompt(doc):
     **Only ask the next question after the user has answered the previous one.**
     **Once all preferences are collected, call the `generate_booking_link` tool with the gathered values.**
 
+    **when the user asks anything closer to contact us show the link. In this case, if a user asks for talk to us link, the response should be the same- “Sure! You can reach out to The Love Hope Company through the following contact link: Contact Us”
+
     VERY IMPORTANT: If you do not know the answer to the user's question or the information is not available, do not attempt to generate a guess or hallucinate a response.
     Instead, politely respond that the information is unavailable and provide the contact page link so the user can reach out for further assistance.
     Example response:
-    "I'm not sure about that, but you can reach our support team here: [Click here to contact us](https://thelovehopecompany.com/contact)"
+    "I'm not sure about that, but you can reach our support team here: [Contact Us](https://thelovehopecompany.com/contact)"
 
     If the user asks to book a therapist by name or gender, respond politely that you can't book by name or gender, but bookings can be made based on:
 
