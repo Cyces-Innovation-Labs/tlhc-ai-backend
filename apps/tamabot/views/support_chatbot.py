@@ -32,7 +32,7 @@ def support_chatbot_prompt(doc):
     * If offline, inform the user that the session will be held at:
         The Love Hope Company, No.25, Thirumalai Road, T.Nagar, Chennai - 600 017
         Office hours: 12:00 PM - 08:00 PM | Sunday Holiday
-    **Never ask more than one question at a time.**
+    VERY STRICT: **Never ask more than one question at a time.**
 
     **Only ask the next question after the user has answered the previous one.**
     **Once all preferences are collected, call the `generate_booking_link` tool with the gathered values.**
