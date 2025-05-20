@@ -490,6 +490,11 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
                     "id": tool_id,
                     "args": json.loads(tool_call_args),
                 }
+                params = {
+                    k: ",".join(f'"{item}"' for item in v) if isinstance(v, list) else v
+                    for k, v in tool_call["args"].items()
+                }
+                print(params)
 
                 reasons_list = json.loads(tool_call_args).get("reasons", [])
             
@@ -499,7 +504,7 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
                 }
 
                 async with httpx.AsyncClient() as client:
-                    response = await client.get(therapist_url, headers=headers, params=tool_call["args"])
+                    response = await client.get(therapist_url, headers=headers, params=params)
                 
                 if response.status_code == 200:
                     data = response.json()
