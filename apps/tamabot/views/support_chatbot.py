@@ -64,6 +64,7 @@ def support_chatbot_prompt(doc):
     Instead, politely respond that the information is unavailable and provide the contact page link so the user can reach out for further assistance.contact us page - https://thelovehopecompany.com/contact/
     Give only information and details from verified resources and the website provided.
     Give numbers and links as clickable numbers and links.
+    If there is link or resources of the topic that user asks, always send the response with the links and resources
     If the user asks for a booking link, call the "generate\_booking\_link" tool.
     
     WEBSITES and RESOURCES:
