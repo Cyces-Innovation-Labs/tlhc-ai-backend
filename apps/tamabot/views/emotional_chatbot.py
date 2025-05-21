@@ -56,7 +56,7 @@ class MentalHealthSupportTool(BaseModel):
         ...,
         description="The reasons the user is seeking therapy, such as anxiety, stress, etc."
                     "If a reason has already been identified from previous messages, it may be skipped."
-                    "When returning reasons, display the items in a table format with two columns — eight items on the left and eight on the right."
+                    "When returning reasons, display the items in a table format without heading or grids with two columns — eight items on the left and eight on the right."
     )
     language: List[LanguageType] = Field(
         ..., description="The language mode of counselling the user is looking for."
@@ -95,8 +95,8 @@ def emotional_chatbot_prompt():
 
         1. What are the reasons you're seeking therapy? - 
         CONDITIONS - *list the reasons available 
-                   - *if the reason is already known from the message history,skip this question
-                   - list the reasons in table format, eight reasons on the right and eight on the left
+        STRICTLY FOLLOW THIS - *if the reason is already known from the message history,skip this question
+                   - list the reasons in table format without heading or grids, eight reasons on the right and eight on the left
 
         2. What language do you prefer?  - *list the languages available
 
