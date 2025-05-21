@@ -57,7 +57,7 @@ class MentalHealthSupportTool(BaseModel):
         description=(
         "The reasons the user is seeking therapy, such as anxiety, stress, etc. "
         "If a reason has already been identified from previous messages, it may be skipped. "
-        "When returning reasons, display the items in a table (with no heading or grid), numbered sequentially from top to bottom. "
+        "When returning reasons, display the items in a table, numbered sequentially from top to bottom. "
         "There should be no headings or grid lines — just a clean side-by-side numbered list with eight items on the left and eight on the right."
         )
     )
@@ -101,7 +101,7 @@ def emotional_chatbot_prompt():
         STRICTLY FOLLOW THIS - 
         -Only ask this if the reason is not already available in message history.
         -If the reason is known from the past messages, just confirm and skip the message.
-        -"When displying the reasons, display the reasons in a table(no heading or grid), numbered sequentially from top to bottom. "
+        -"When displying the reasons, display the reasons in a table, numbered sequentially from top to bottom. "
         -"There should be no headings or grid lines — just a clean side-by-side numbered list with eight reasons on the left and eight on the right."
 
         2. What language do you prefer?  - *list the languages available
