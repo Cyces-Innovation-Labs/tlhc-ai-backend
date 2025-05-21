@@ -98,7 +98,7 @@ class MentalHealthSupportTool(BaseModel):
         description=(
             "The reasons the user is seeking therapy, such as anxiety, stress, etc. "
             "If a reason has already been identified from previous messages, it may be skipped. "
-            "Display 16 numbered reasons in a markdown table with two columns and no headers. The left column should have reasons 1–8, and the right column should have reasons 9–16, Make every reason bold, and make all center aligned."
+            "Display 16 numbered reasons in a markdown table with two columns and no headers. The left column should have reasons 1–8, and the right column should have reasons 9–16, Make every reason bold, and make all left aligned including the heading."
         )
     )
     language: List[LanguageType] = Field(
@@ -132,6 +132,18 @@ def emotional_chatbot_prompt():
         - “Can I book a session?”
 
         Do **not** proceed if the user is in an **emergency or crisis situation** — instead, advise them to contact emergency services or a local helpline.
+
+        If the user asks to book a therapist by name or gender, respond politely that you can't book by name or gender, but bookings can be made based on:
+
+        *Reason for counseling
+
+        *Language preference
+
+        *Price
+
+        *Mode of counseling (online/offline)
+
+        **Also remember you cant book a session by therapist name**
 
         ---
 
