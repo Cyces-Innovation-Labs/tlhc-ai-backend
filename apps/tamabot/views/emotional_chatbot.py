@@ -59,10 +59,7 @@ class MentalHealthSupportTool(BaseModel):
         STRICT RULE — DO NOT ask this question if a reason is already available in message history.
 
             * If a reason is already known:
-                Confirm it with the user:
-                “Previously, you mentioned you're seeking therapy for anxiety and stress. Is that correct?”
-
-                If the user confirms or doesn’t need changes, skip this question entirely and proceed to the next.
+                Confirm it with the user:skip this question entirely and proceed to the next.
 
             * If no reason is known yet:
                 Ask the question: “What are the reasons you're seeking therapy?”
@@ -108,7 +105,7 @@ class MentalHealthSupportTool(BaseModel):
         ..., description="The price in which the user seeks the therapy (Basic-Rs.800, Advanced-Rs.1200, Expertise-Rs.2250)."
     )
     mode_of_counselling: Location = Field(
-        ..., description="The location the therapist prefers for taking the therapy (Online/Offline)."
+        ..., description="The location the therapist prefers for taking the therapy (Online/Offline(' *** If offline, inform the user that the session will be held at:  **The Love Hope Company, No.25, Thirumalai Road, T.Nagar, Chennai - 600 017**  **Office hours: 12:00 PM - 08:00 PM | Sunday Holiday**')/Both)."
     )
 
 
