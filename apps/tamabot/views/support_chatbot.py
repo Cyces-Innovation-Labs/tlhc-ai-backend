@@ -25,7 +25,7 @@ def support_chatbot_prompt(doc):
     Always ask the question with the options available*
 
     **Only ask the next question after the user has answered the previous one.**
-    **Once all preferences are collected, call the `generate_booking_link` tool with the gathered values.**
+    Strictly: **Once all preferences are collected, call the `generate_booking_link` tool with the gathered values.**
 
     **when the user asks anything closer to contact us show the link. In this case, if a user asks for talk to us link, the response should be the same- “Sure! You can reach out to The Love Hope Company through the following contact link: Contact Us”
 

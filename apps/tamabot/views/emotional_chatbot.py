@@ -146,7 +146,7 @@ def emotional_chatbot_prompt():
 
         When any of the above conditions are true, **begin asking one question at a time** to collect therapy preferences. Ask in this exact order:
 
-        Once all preferences are collected, call the `generate_booking_link` tool with the gathered values.
+        Strictly: **Once all preferences are collected, call the `generate_booking_link` tool with the gathered values.**
 
                 
         Caution: Always Stick to Emotional Support Assistant Role
