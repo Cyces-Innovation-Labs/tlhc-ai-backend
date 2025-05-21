@@ -98,7 +98,7 @@ class MentalHealthSupportTool(BaseModel):
         description=(
             "The reasons the user is seeking therapy, such as anxiety, stress, etc. "
             "If a reason has already been identified from previous messages, it may be skipped. "
-            "List 16 reasons in two columns, numbered 1–8 in the left column and 9–16 in the right column. Do not use any table headers, grid lines, or vertical bars. Format as plain text so it looks like two columns"
+            "Display 16 numbered reasons in a markdown table with two columns and no headers. The left column should have reasons 1–8, and the right column should have reasons 9–16"
         )
     )
     language: List[LanguageType] = Field(
