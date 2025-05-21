@@ -49,11 +49,16 @@ class Location(str, Enum):
 
 
 class MentalHealthSupportTool(BaseModel):
-    """Schema for selecting professional mental health support options for Booking.I"""
+    """Schema for selecting professional mental health support options for Booking.
+
+    When returning list-based data (eg.reasons), display the items in a table
+    format with two columns — eight items on the left and eight on the right.
+    """
 
     reasons: List[MentalHealthReason] = Field(
         ...,
         description="The reasons the user is seeking therapy, such as anxiety, stress, etc."
+                    "If a reason has already been identified from previous messages, it may be skipped."
     )
     language: List[LanguageType] = Field(
         ..., description="The language mode of counselling the user is looking for."

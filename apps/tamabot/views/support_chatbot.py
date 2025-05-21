@@ -24,8 +24,6 @@ def support_chatbot_prompt(doc):
     When any of the above conditions are true, begin asking one question at a time to collect therapy preferences. Ask in this exact order:
     Always ask the question with the options available*
     1. What are the reasons you're seeking therapy? - *list the reasons available
-    ***Please list the reasons like this
-    first 8 reasons and next the 8 reasons , display it side by side
 
     Warm, validating alternatives:
        1) “Thank you for sharing that — it’s completely valid to feel this way.”
