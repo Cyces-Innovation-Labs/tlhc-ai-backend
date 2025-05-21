@@ -57,8 +57,7 @@ class MentalHealthSupportTool(BaseModel):
         description=(
         "The reasons the user is seeking therapy, such as anxiety, stress, etc. "
         "If a reason has already been identified from previous messages, it may be skipped. "
-        "When returning reasons, display the items in a table, numbered sequentially from top to bottom. "
-        "There should be no headings or grid lines — just a clean side-by-side numbered list with eight items on the left and eight on the right."
+        "When returning reasons, display the reasons in a table"
         )
     )
     language: List[LanguageType] = Field(
@@ -96,8 +95,7 @@ def emotional_chatbot_prompt():
 
         When any of the above conditions are true, **begin asking one question at a time** to collect therapy preferences. Ask in this exact order:
 
-        1. What are the reasons you're seeking therapy? - 
-        CONDITIONS - *list the reasons available 
+        1. What are the reasons you're seeking therapy? - *list the reasons available in table format
         STRICTLY FOLLOW THIS - 
         -Only ask this if the reason is not already available in message history.
         -If the reason is known from the past messages, just confirm and skip the message.
