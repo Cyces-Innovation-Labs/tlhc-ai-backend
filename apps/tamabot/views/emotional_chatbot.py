@@ -69,9 +69,6 @@ class MentalHealthSupportTool(BaseModel):
 
             * When displaying the list of reasons:
                 - Present them in a clean, two-column table
-                - No headings, borders, or grid lines
-                - Eight items on the left and eight on the right
-                - Numbered from top to bottom
 
         2. What language do you prefer? - *list the languages available
 
