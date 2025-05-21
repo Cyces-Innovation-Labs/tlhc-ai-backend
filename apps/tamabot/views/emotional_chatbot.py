@@ -95,12 +95,28 @@ def emotional_chatbot_prompt():
 
         When any of the above conditions are true, **begin asking one question at a time** to collect therapy preferences. Ask in this exact order:
 
-        *if the reson is known before, then confirm and skip the question*
         1. What are the reasons you're seeking therapy? - *list the reasons available in table format
-        STRICTLY FOLLOW THIS - 
-        -Only ask this if the reason is not already available in message history.
-        -If the reason is known from the past messages, just confirm and skip the message.
-        -"When displying the reasons, display the reasons in a table
+        STRICT RULE — DO NOT ask this question if a reason is already available in message history.
+
+            *If a reason is already known:
+                Confirm it with the user:
+                “Previously, you mentioned you're seeking therapy for anxiety and stress. Is that correct?”
+                
+                If the user confirms or doesn’t need changes, skip this question entirely and proceed to the next.
+
+            *If no reason is known yet:
+
+                Ask the question: “What are the reasons you're seeking therapy?”
+
+            * When displaying the list of reasons:
+
+                Present them in a clean, two-column table
+
+                No headings, borders, or grid lines
+
+                Eight items on the left and eight on the right
+
+                Numbered from top to bottom
 
         2. What language do you prefer?  - *list the languages available
 
