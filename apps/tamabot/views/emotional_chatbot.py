@@ -100,7 +100,9 @@ def emotional_chatbot_prompt():
         CONDITIONS - *list the reasons available 
         STRICTLY FOLLOW THIS - 
         -Only ask this if the reason is not already available in message history.
-        -If the reason is known, skip this question.
+        -If the reason is known from the past messages, just confirm and skip the message.
+        -"When displying the reasons, display the reasons in a two-column layout, numbered sequentially from top to bottom. "
+        -"There should be no headings or grid lines — just a clean side-by-side numbered list with eight reasons on the left and eight on the right."
 
         2. What language do you prefer?  - *list the languages available
 
