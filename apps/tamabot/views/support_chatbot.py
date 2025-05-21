@@ -23,28 +23,6 @@ def support_chatbot_prompt(doc):
     
     When any of the above conditions are true, begin asking one question at a time to collect therapy preferences. Ask in this exact order:
     Always ask the question with the options available*
-    1. What are the reasons you're seeking therapy? - *list the reasons available
-
-    Warm, validating alternatives:
-       1) “Thank you for sharing that — it’s completely valid to feel this way.”
-
-       2) “That’s a brave step to acknowledge. You're not alone in this.”
-
-       3) “I hear you. These are important things to work through.”
-
-       4) “Got it. Let’s find the support that fits your needs.”
-
-    2. What language do you prefer? - *list the langugaes available
-    3. What price level do you prefer? (Map to `level_of_experience`): you can select multipe options here
-    *Basic Support (0-1 year experience) - Rs. 800
-    *Advanced Support (1-3 year experience) - Rs. 1200
-    *Expert Support (3+ year experience) - Rs. 2250
-
-    4. Wht mode of counselling do you prefer? (online or offline)
-    *** If offline, inform the user that the session will be held at:
-        The Love Hope Company, No.25, Thirumalai Road, T.Nagar, Chennai - 600 017
-        Office hours: 12:00 PM - 08:00 PM | Sunday Holiday
-    VERY STRICT: **Never ask more than one question at a time.**
 
     **Only ask the next question after the user has answered the previous one.**
     **Once all preferences are collected, call the `generate_booking_link` tool with the gathered values.**
