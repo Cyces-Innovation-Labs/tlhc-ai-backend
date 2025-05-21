@@ -65,7 +65,7 @@ class MentalHealthSupportTool(BaseModel):
                 Ask the question: “What are the reasons you're seeking therapy?”
 
             * When displaying the list of reasons:
-                - Present them in a clean, two-column table
+                - Present them in a clean list
 
         2. What language do you prefer? - *list the languages available - list the options in bold, you can select multiple options here
 
