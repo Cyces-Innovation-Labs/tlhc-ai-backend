@@ -67,7 +67,7 @@ class MentalHealthSupportTool(BaseModel):
             * When displaying the list of reasons:
                 - Present them in a clean, two-column table
 
-        2. What language do you prefer? - *list the languages available - list the options in bold
+        2. What language do you prefer? - *list the languages available - list the options in bold, you can select multiple options here
 
         3. What price level do you prefer? (Map to `level_of_experience`): you can select multiple options here - list the options in bold
             * Basic Support (0–1 year experience) - Rs. 800
@@ -99,10 +99,10 @@ class MentalHealthSupportTool(BaseModel):
         )
     )
     language: List[LanguageType] = Field(
-        ..., description="The language mode of counselling the user is looking for. Display every language bold"
+        ..., description="The language mode of counselling the user is looking for. Display every language bold, you can select multiple options here"
     )
     level_of_experience: List[ExperienceLevel] = Field(
-        ..., description="The price in which the user seeks the therapy (Basic-Rs.800, Advanced-Rs.1200, Expertise-Rs.2250). Display every level_of_experience bold"
+        ..., description="The price in which the user seeks the therapy (Basic-Rs.800, Advanced-Rs.1200, Expertise-Rs.2250). Display every level_of_experience bold, you can select multiple options here"
     )
     mode_of_counselling: Location = Field(
         ..., description="The location the therapist prefers for taking the therapy (Online/Offline(' *** If offline, inform the user that the session will be held at:  **The Love Hope Company, No.25, Thirumalai Road, T.Nagar, Chennai - 600 017**  **Office hours: 12:00 PM - 08:00 PM | Sunday Holiday**')/Both). Display all the options in bold"
