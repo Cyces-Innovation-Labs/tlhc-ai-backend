@@ -49,26 +49,71 @@ class Location(str, Enum):
 
 
 class MentalHealthSupportTool(BaseModel):
-    """Schema for selecting professional mental health support options for Booking.
+    """
+    Schema for selecting professional mental health support options for Booking.
+
+    When any of the below conditions are true, **begin asking one question at a time** to collect therapy preferences.
+    Ask in this exact order:
+
+        1. What are the reasons you're seeking therapy? - *list the reasons available in table format
+        STRICT RULE — DO NOT ask this question if a reason is already available in message history.
+
+            * If a reason is already known:
+                Confirm it with the user:
+                “Previously, you mentioned you're seeking therapy for anxiety and stress. Is that correct?”
+
+                If the user confirms or doesn’t need changes, skip this question entirely and proceed to the next.
+
+            * If no reason is known yet:
+                Ask the question: “What are the reasons you're seeking therapy?”
+
+            * When displaying the list of reasons:
+                - Present them in a clean, two-column table
+                - No headings, borders, or grid lines
+                - Eight items on the left and eight on the right
+                - Numbered from top to bottom
+
+        2. What language do you prefer? - *list the languages available
+
+        3. What price level do you prefer? (Map to `level_of_experience`): you can select multiple options here
+            * Basic Support (0–1 year experience) - Rs. 800
+            * Advanced Support (1–3 year experience) - Rs. 1200
+            * Expert Support (3+ year experience) - Rs. 2250
+
+        4. What mode of counselling do you prefer? (online or offline or both)
+            *** If offline, inform the user that the session will be held at:  
+                **The Love Hope Company, No.25, Thirumalai Road, T.Nagar, Chennai - 600 017**  
+                **Office hours: 12:00 PM - 08:00 PM | Sunday Holiday**
+
+    Warm, validating alternatives for the above questions:
+        1) “Thank you for sharing that — it’s completely valid to feel this way.”
+        2) "Got it! Let’s move to the next step."
+        3) “That’s a brave step to acknowledge. You're not alone in this.”
+        4) “I hear you. These are important things to work through.”
+        5) “Got it. Let’s find the support that fits your needs.”
+
+    **Never ask more than one question at a time.**  
+    Only ask the next question after the user has answered the previous one.
     """
 
     reasons: List[MentalHealthReason] = Field(
         ...,
         description=(
-        "The reasons the user is seeking therapy, such as anxiety, stress, etc. "
-        "If a reason has already been identified from previous messages, it may be skipped. "
-        "When returning reasons, display the reasons in a table"
+            "The reasons the user is seeking therapy, such as anxiety, stress, etc. "
+            "If a reason has already been identified from previous messages, it may be skipped. "
+            "When returning reasons, display the reasons in a table."
         )
     )
     language: List[LanguageType] = Field(
         ..., description="The language mode of counselling the user is looking for."
     )
     level_of_experience: List[ExperienceLevel] = Field(
-        ..., description="The price in which the user seeks the therapy (Basic-Rs.800, Advanced-Rs.1200, Expertise-Rs.2250) "
+        ..., description="The price in which the user seeks the therapy (Basic-Rs.800, Advanced-Rs.1200, Expertise-Rs.2250)."
     )
     mode_of_counselling: Location = Field(
-        ..., description="The location the therapist preferes for taking the therapy either (Online/Offline)"
+        ..., description="The location the therapist prefers for taking the therapy (Online/Offline)."
     )
+
 
 
 def emotional_chatbot_prompt():
