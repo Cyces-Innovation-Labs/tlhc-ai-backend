@@ -101,7 +101,6 @@ def emotional_chatbot_prompt():
         STRICTLY FOLLOW THIS - 
         -Only ask this if the reason is not already available in message history.
         -If the reason is known, skip this question.
-        -Display the list of possible reasons in a table with two columns (no headings or borders), numbered, eight on the left and eight on the right.*if the reason is already known from the message history,skip this question
 
         2. What language do you prefer?  - *list the languages available
 
