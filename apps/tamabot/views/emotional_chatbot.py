@@ -55,7 +55,7 @@ class MentalHealthSupportTool(BaseModel):
     When any of the below conditions are true, **begin asking one question at a time** to collect therapy preferences.
     Ask in this exact order:
 
-        1. What are the reasons you're seeking therapy? - *list the reasons available in table format
+        1. What are the reasons you're seeking therapy? - *list the reasons available in list format
         STRICT RULE — DO NOT ask this question if a reason is already available in message history.
 
             * If a reason is already known:
