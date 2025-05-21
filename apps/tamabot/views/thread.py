@@ -348,8 +348,8 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
     async def emotional_gen_ai(self, formatted_messages, user_question, thread):    
         system_template = emotional_chatbot_prompt()
         prompt_template = ChatPromptTemplate.from_messages([
-            ('system', system_template),
             *formatted_messages,
+            ('system', system_template),
             ('user', '{text}')
         ])
 
