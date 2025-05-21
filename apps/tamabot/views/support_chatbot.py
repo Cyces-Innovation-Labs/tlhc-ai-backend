@@ -28,13 +28,13 @@ def support_chatbot_prompt(doc):
     first 8 reasons and next the 8 reasons , display it side by side
 
     Warm, validating alternatives:
-        “Thank you for sharing that — it’s completely valid to feel this way.”
+       1) “Thank you for sharing that — it’s completely valid to feel this way.”
 
-        “That’s a brave step to acknowledge. You're not alone in this.”
+       2) “That’s a brave step to acknowledge. You're not alone in this.”
 
-        “I hear you. These are important things to work through.”
+       3) “I hear you. These are important things to work through.”
 
-        “Got it. Let’s find the support that fits your needs.”
+       4) “Got it. Let’s find the support that fits your needs.”
 
     2. What language do you prefer? - *list the langugaes available
     3. What price level do you prefer? (Map to `level_of_experience`): you can select multipe options here
