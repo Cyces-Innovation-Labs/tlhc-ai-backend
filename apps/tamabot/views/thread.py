@@ -87,18 +87,6 @@ class NewThreadAPIView(NonAuthenticatedAPIMixin,AppAPIView):
             if serializer.is_valid():
                 chatbot_type = serializer.validated_data["chatbot_type"]
                 thread = Thread.objects.create(chatbot_type=chatbot_type)
-                if chatbot_type == ChatbotTypeChoices.emotional:
-                    ai_response = "Absolutely! I’m here to listen.What’s on your mind? Feel free to share anything you’re comfortable with."
-                    Message.object.create(thread=thread,
-                        user_question=None,
-                        ai_answer=ai_response,
-                    )
-                elif chatbot_type == ChatbotTypeChoices.support:
-                    ai_response = "Great choice! We have a variety of services to support your mental wellness. Which one would you like to learn more about?\n1.Book A Couch (Counseling)\n2.Love Hope Circles (Support Groups)\n3.EITA (For Kids and Parents)\n4.Wellness At Work (For Organizations)\n5.Others."
-                    Message.object.create(thread=thread,
-                        user_question=None,
-                        ai_answer=ai_response,
-                    )
                 return self.send_response({"thread_id": str(thread.uuid)})
             return self.send_error_response(serializer.errors)
         except Exception as e:
