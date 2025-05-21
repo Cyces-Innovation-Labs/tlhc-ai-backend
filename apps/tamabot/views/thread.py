@@ -423,7 +423,7 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
                         "tool_response": json.dumps(tool_response)
                     }):
                         ai_answer_chunks.append(chunk)
-                        yield f"data: {json.dumps({'type': 'tool_calling', 'content': chunk})}\n\n"
+                        yield f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
                     yield f"data: {json.dumps({'type': 'tool_calling', 'tool_response': tool_response})}\n\n"
             ai_response = "".join(ai_answer_chunks)
         except Exception as e:
