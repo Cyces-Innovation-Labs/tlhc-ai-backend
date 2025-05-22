@@ -88,6 +88,12 @@ class MentalHealthSupportTool(BaseModel):
 
     **Never ask more than one question at a time.**  
     Only ask the next question after the user has answered the previous one.
+
+   STRICTLY: Output only one JSON object, like:
+    {{"reasons": ["Anxiety"], "language": ["English"], "level_of_experience": ["basic"], "mode_of_counselling": "both"}}
+
+    Never return multiple JSONs, code blocks, or explanatory text.
+    Do NOT output multiple JSON objects, arrays, or any extra text, formatting, or code fences., the chatbot will fail in that case
     """
 
     reasons: List[MentalHealthReason] = Field(
@@ -145,15 +151,19 @@ def emotional_chatbot_prompt():
         When any of the above conditions are true, **begin asking one question at a time** to collect therapy preferences. Ask in this exact order:
 
 
-        **Tool Call Rules:**
+         **Tool Call Rules:**
             - As soon as all preferences are collected (whether in the first message or after follow-up questions), immediately call the `generate_booking_link` tool with the gathered values.
+            - When you have collected all preferences, output only a single valid JSON object:
+                STRICT INSTRUCTION: Output only one JSON object. Do NOT output multiple JSON objects, arrays, or any extra text, formatting, or code fences.
+
             - If, at any point, the user asks to change a preference (e.g., “Actually, I want to change the language to Hindi”), do the following:
-                1. Update the stored value for that preference.
-                2. Immediately call the `generate_booking_link` tool again with the updated preferences.
+                1. Update the stored value for that preference and send only the updated JSON object , not the old one, **Strictly send the updated single JSON object**
+                2. Immediately call the `generate_booking_link` tool again with the updated preferences. STRICT INSTRUCTION: Output only one JSON object. Do NOT output multiple JSON objects, arrays, or any extra text, formatting, or code fences.
                 3. Confirm to the user that their change has been saved and a new booking link is being generated.
 
             **Strictly:**
-            - Never wait for further confirmation after a preference change—always call the tool right after the change.
+            - If there is any updation after the tool calling, updated the value alone, and pass only the single updated json
+            - Never wait for further confirmation after a preference change—always call the tool right after the preference change.
             - Never proceed with booking if the user is in crisis or an emergency.
                 
         Caution: Always Stick to Emotional Support Assistant Role
@@ -166,6 +176,9 @@ def emotional_chatbot_prompt():
         Try to give numbers and links as clickable numbers and links  
 
         If the user asks for booking link, call the "generate_booking_link" tool
+
+        VERY IMPORTANT:  
+        Whenever you mention any website, helpline, or resource, always provide it as a clickable hyperlink using Markdown format.  
 
         WEBSITES and RESOURCE:
         - Tele MANAS - 14416 

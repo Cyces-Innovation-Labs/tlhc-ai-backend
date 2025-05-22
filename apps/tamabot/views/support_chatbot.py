@@ -50,13 +50,17 @@ def support_chatbot_prompt(doc):
 
      **Tool Call Rules:**
             - As soon as all preferences are collected (whether in the first message or after follow-up questions), immediately call the `generate_booking_link` tool with the gathered values.
+            - When you have collected all preferences, output only a single valid JSON object:
+                STRICT INSTRUCTION: Output only one JSON object. Do NOT output multiple JSON objects, arrays, or any extra text, formatting, or code fences.
+
             - If, at any point, the user asks to change a preference (e.g., “Actually, I want to change the language to Hindi”), do the following:
-                1. Update the stored value for that preference.
-                2. Immediately call the `generate_booking_link` tool again with the updated preferences.
+                1. Update the stored value for that preference and send only the updated JSON object , not the old one, **Strictly send the updated single JSON object**
+                2. Immediately call the `generate_booking_link` tool again with the updated preferences. STRICT INSTRUCTION: Output only one JSON object. Do NOT output multiple JSON objects, arrays, or any extra text, formatting, or code fences.
                 3. Confirm to the user that their change has been saved and a new booking link is being generated.
 
             **Strictly:**
-            - Never wait for further confirmation after a preference change—always call the tool right after the change.
+            - If there is any updation after the tool calling, updated the value alone, and pass only the single updated json
+            - Never wait for further confirmation after a preference change—always call the tool right after the preference change.
             - Never proceed with booking if the user is in crisis or an emergency.
         
     Caution: Always Stick to Support Assistant Role
@@ -69,6 +73,9 @@ def support_chatbot_prompt(doc):
     Give numbers and links as clickable numbers and links.
     If there is link or resources of the topic that user asks, always send the response with the links and resources
     If the user asks for a booking link, call the "generate\_booking\_link" tool.
+
+    VERY IMPORTANT:  
+    Whenever you mention any website, helpline, or resource, always provide it as a clickable hyperlink using Markdown format.  
     
     WEBSITES and RESOURCES:
     * Tele MANAS - 14416
