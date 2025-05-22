@@ -439,6 +439,7 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
                         ai_answer_chunks.append(chunk)
                         yield f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
                     yield f"data: {json.dumps({'type': 'tool_calling', 'tool_response': tool_response})}\n\n"
+                    # print(tool_response)
             ai_response = "".join(ai_answer_chunks)
         except Exception as e:
             print(e)
@@ -446,7 +447,7 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
             yield f"data: {json.dumps({'type': 'message_delta', 'content': ai_response})}\n\n"
 
         yield f"data: {json.dumps({'type': 'status', 'content': 'completed'})}\n\n"
-        print(ai_response)
+        # print(ai_response)
         message_obj = await sync_to_async(Message.objects.create)(
         thread=thread,
         user_question=user_question,
@@ -547,6 +548,7 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
                         ai_answer_chunks.append(chunk)
                         yield f"data: {json.dumps({'type': 'message_delta', 'content': chunk})}\n\n"
                     yield f"data: {json.dumps({'type': 'tool_calling', 'tool_response': tool_response})}\n\n"
+                    # print(tool_response)
             ai_response = "".join(ai_answer_chunks)
         except Exception as e:
             print(e)
@@ -554,7 +556,7 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
             yield f"data: {json.dumps({'type': 'message_delta', 'content': ai_response})}\n\n"
 
         yield f"data: {json.dumps({'type': 'status', 'content': 'completed'})}\n\n"
-        print(ai_response)
+        # print(ai_response)
         message_obj = await sync_to_async(Message.objects.create)(
         thread=thread,
         user_question=user_question,
