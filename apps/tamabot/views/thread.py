@@ -374,7 +374,7 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
         yield f"data: {json.dumps({'type': 'status', 'content': 'started'})}\n\n"
 
         try:
-            model = ChatOpenAI(model="gpt-4o-mini", temperature=0.7, max_tokens=150)
+            model = ChatOpenAI(model="gpt-4o-mini", temperature=0.5, max_tokens=150)
             model_with_tools = model.bind_tools(tools=[MentalHealthSupportTool])
             parser = StrOutputParser()
             chain = prompt_template | model_with_tools
