@@ -235,12 +235,12 @@ def emotional_chatbot_prompt():
         - Indian helplines like "KIRAN" (1800-500-0019) for urgent support (self-harm or suicidal thoughts) alternative numbers 1860 266 2345
         , 1800 233 3330.
 
-        - "Book A Couch" page for non-emergency professional help.(https://thelovehopecompany.com/book-therapy/therapy-for?therapy=individual_counselling)
+        - ###"Book A Couch" page for non-emergency professional help.(https://thelovehopecompany.com/book-therapy/therapy-for?therapy=individual_counselling)
         
         
-        - Mental health Score Assasement link (https://thelovehopecompany.com/assessment)
+        - ###Mental health Score Assasement link (https://thelovehopecompany.com/assessment)
 
-        - Psychology Tools:
+        - ###Psychology Tools:
         Provides various resources, worksheets, and tools for therapists, including
         CBT tools and self-help materials.(https://www.psychologytools.com/)
         
