@@ -20,7 +20,7 @@ import json
 from django_filters import rest_framework as filters
 from apps.common.helpers import log_to_cloudwatch
 from urllib.parse import urlparse
-from langchain_community.document_loaders.sitemap import SitemapLoader
+from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 from langchain_postgres.vectorstores import PGVector
@@ -374,7 +374,7 @@ class TamaChatbotStreamingResponseAPIView(NonAuthenticatedAPIMixin, APIView):
         yield f"data: {json.dumps({'type': 'status', 'content': 'started'})}\n\n"
 
         try:
-            model = ChatOpenAI(model="gpt-4o-mini", temperature=0.4, max_tokens=300)
+            model = ChatOpenAI(model="gpt-4o-mini", temperature=0.1, max_tokens=300)
             model_with_tools = model.bind_tools(tools=[MentalHealthSupportTool])
             parser = StrOutputParser()
             chain = prompt_template | model_with_tools
@@ -644,7 +644,7 @@ class UrlScrapingAPIView(NonAuthenticatedAPIMixin, AppAPIView):
                 continue
 
             try:
-                loader = SitemapLoader(url)
+                loader = WebBaseLoader(url)
                 documents = loader.load()
                 text_chunks = self.split_documents(documents)
                 metadatas = {"url": url}
