@@ -20,7 +20,7 @@ import json
 from django_filters import rest_framework as filters
 from apps.common.helpers import log_to_cloudwatch
 from urllib.parse import urlparse
-from langchain_community.document_loaders import SiteMapLoader
+from langchain_community.document_loaders.sitemap import SitemapLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 from langchain_postgres.vectorstores import PGVector
