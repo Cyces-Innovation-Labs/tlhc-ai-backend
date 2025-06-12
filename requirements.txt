@@ -27,3 +27,15 @@ channels-redis==4.2.1
 redis==5.1.1
 adrf==0.1.9
 uvicorn==0.34.0
+langchain==0.3.25
+langchain-community==0.3.24
+langchain-core==0.3.59
+langchain-openai==0.2.10
+langchain-postgres==0.0.14
+langchain-text-splitters==0.3.8
+langsmith==0.2.3
+lxml==5.4.0
+psycopg[binary]
+beautifulsoup4==4.13.4
+urllib3==2.0.7
+pgvector==0.3.6

@@ -10,6 +10,8 @@ from apps.tamabot.views import (
     ThreadTagUpdateViewSet,
     MessageListAPIViewSet,
     ThreadStatusUpdateViewSet,
+    TamaChatbotStreamingResponseAPIView,
+    UrlScrapingAPIView,
 )
 
 router = SimpleRouter()
@@ -25,5 +27,7 @@ router.register("thread/tag/update", ThreadTagUpdateViewSet)
 urlpatterns = [
     path(f"{API_URL_PREFIX}tama-streaming-response/", TamaStreamingResponseAPIView.as_view()),
     path(f"{API_URL_PREFIX}new-thread/", NewThreadAPIView.as_view()),
+    path(f"{API_URL_PREFIX}tama/", TamaChatbotStreamingResponseAPIView.as_view()),
+    path(f"{API_URL_PREFIX}url/scrape/", UrlScrapingAPIView.as_view()),
     path(f"{API_URL_PREFIX}", include(router.urls)),
 ]

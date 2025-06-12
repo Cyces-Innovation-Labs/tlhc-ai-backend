@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from apps.tamabot.config import ChatbotTypeChoices
 from apps.tamabot.models import Thread,Message
 from apps.common.serializers import AppReadOnlyModelSerializer
 
@@ -6,6 +7,8 @@ class TamaResponseSerializer(serializers.Serializer):
     thread_id = serializers.UUIDField(required=True)
     user_question = serializers.CharField(max_length=512, required=True)
 
+class ThreadCreateSerializer(serializers.Serializer):
+    chatbot_type = serializers.ChoiceField(choices=ChatbotTypeChoices.choices, required=True)
 
 class MessageSerializer(AppReadOnlyModelSerializer):
     class Meta:
