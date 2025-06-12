@@ -644,7 +644,7 @@ class UrlScrapingAPIView(NonAuthenticatedAPIMixin, AppAPIView):
                 continue
 
             try:
-                loader = SiteMapLoader(url)
+                loader = SitemapLoader(url)
                 documents = loader.load()
                 text_chunks = self.split_documents(documents)
                 metadatas = {"url": url}
